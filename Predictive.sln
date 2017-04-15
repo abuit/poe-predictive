@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.26403.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Predictive", "Predictive\Predictive.csproj", "{15644826-D4B4-4F83-BFA1-9C889F8B1AF3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POEStash.NET", "POEStash.NET\POEStash.NET.csproj", "{052AED0B-5682-4AAF-BD36-9F827858E61F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{15644826-D4B4-4F83-BFA1-9C889F8B1AF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15644826-D4B4-4F83-BFA1-9C889F8B1AF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{15644826-D4B4-4F83-BFA1-9C889F8B1AF3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{052AED0B-5682-4AAF-BD36-9F827858E61F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{052AED0B-5682-4AAF-BD36-9F827858E61F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{052AED0B-5682-4AAF-BD36-9F827858E61F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{052AED0B-5682-4AAF-BD36-9F827858E61F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
