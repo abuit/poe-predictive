@@ -25,7 +25,7 @@ namespace POEStash
                     string id = file.Name.Substring(PREFIX.Length + 1, file.Name.Length - PREFIX.Length - 1);
                     cache.Add(id, new CachedJson(id));
 
-                    System.Console.WriteLine("Indexed file: " + file.Name);
+                    System.Diagnostics.Debug.WriteLine("Indexed file: " + file.Name);
                 }
             }
         }
@@ -72,7 +72,7 @@ namespace POEStash
                 return json;
             }
 
-            System.Console.WriteLine("Loading file from cache: " + filePath);
+            System.Diagnostics.Debug.WriteLine("Loading file from cache: " + filePath);
 
             using (StreamReader reader = new StreamReader(filePath))
             {
@@ -84,16 +84,20 @@ namespace POEStash
         private static async Task SaveToFile(string id, string json)
         {
             var filePath = Path.GetTempPath() + PREFIX + "-" + id;
+            var bufferFilePath = Path.GetTempPath() + "TEMP" + PREFIX + "-" + id;
 
-            System.Console.WriteLine("Writing file to cache: " + filePath);
+            System.Diagnostics.Debug.WriteLine("Writing file to cache: " + filePath);
 
-            using (Stream stream = File.OpenWrite(filePath))
+            using (Stream stream = File.OpenWrite(bufferFilePath))
             {
                 using (StreamWriter writer = new StreamWriter(stream))
                 {
                     await writer.WriteAsync(json);
                 }
             }
+
+            File.Copy(bufferFilePath, filePath, true);
+            File.Delete(bufferFilePath);
         }
 
         public static bool HasJsonForKey(string id)
