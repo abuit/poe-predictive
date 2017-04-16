@@ -7,7 +7,7 @@ using System.Text.RegularExpressions;
 
 namespace Predictive
 {
-    class BeltNetwork
+    public class BeltNetwork
     {
         private readonly BackPropagationLearning teacher;
         private readonly ActivationNetwork network;
@@ -68,6 +68,44 @@ namespace Predictive
             var result = network.Compute(belt.CreateInputVector());
             belt.ProcessOutputVector(result);
             return belt.CalculatedPrice.Value;
+        }
+
+        public double DetermineAccuracy(List<Belt> calibrationBelts)
+        {
+            double accuracy = 0;
+            int hits = 0;
+            foreach (Belt b in calibrationBelts)
+            {
+                if (b.CalibrationPrice == null)
+                    continue;
+
+                PredictBelt(b);
+
+                double provided = b.CalibrationPrice.Value;
+                if (provided > Belt.MaxSupportedChaosPrice) provided = Belt.MaxSupportedChaosPrice;
+
+                double predicted = b.CalculatedPrice.Value;
+
+                double currentBeltAccuracy;
+                if (provided == predicted)
+                {
+                    currentBeltAccuracy = 100;
+
+                }
+                else if (provided < predicted)
+                {
+                    currentBeltAccuracy = 100 * provided / predicted;
+                }
+                else
+                {
+                    currentBeltAccuracy = 100 * predicted / provided;
+                }
+
+                accuracy = ((accuracy * hits) + currentBeltAccuracy) / (hits + 1);
+                hits++;
+            }
+
+            return accuracy;
         }
     }
 }

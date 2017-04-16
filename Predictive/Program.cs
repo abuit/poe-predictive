@@ -4,14 +4,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Predictive
 {
     class Program
-    {   
+    {
         //Set the starting point to the first change ID of the specific league.
-        static readonly string startingPoint = "0";        
+        static readonly string startingPoint = "0";
+
+        static ConversionTable conversionTable;
+        static BeltNetwork beltNetwork;
+
+        static bool loadingHalted = false;
 
         public static void Main(string[] args)
         {
@@ -34,63 +40,13 @@ namespace Predictive
                 { CurrencyType.ExaltedOrb, 50f},
                 { CurrencyType.VaalOrb, 1f},
             };
-            ConversionTable conversionTable = new ConversionTable(rates);
+            conversionTable = new ConversionTable(rates);
 
-            //Load belts
-            BeltNetwork beltNetwork = new BeltNetwork();
-            List<Belt> loadedBelts = new List<Belt>();
+            NetworkTrainer trainer = new NetworkTrainer(conversionTable);
+            trainer.StartTraining();
 
-            string currentChangeId = startingPoint;
-            while (true)
-            {
-                Console.WriteLine($"Loading for {currentChangeId}...");
-                var stash = POEStash.POEStash.CreateAPIStash(currentChangeId);
-                StashCollection c = stash.GetStashes().Result;
-                foreach (Stash s in c.Stashes)
-                {
-                    foreach (Item i in s.Items)
-                    {
-                        //Only belts for now
-                        if (i.ItemType != ItemType.Belt)
-                        {
-                            continue;
-                        }
-
-                        //No uniques for now
-                        if (i.FrameType != FrameType.Magic && i.FrameType != FrameType.Rare)
-                            continue;
-
-                        //Ignore non-chaos priced items for now
-                        if (i.Price.IsEmpty() || i.Price.CurrencyType == CurrencyType.Unknown)
-                            continue;
-
-                        //Convert if needed
-                        float value;
-                        if (i.Price.CurrencyType != CurrencyType.ChaosOrb)
-                            value = conversionTable.ConvertTo(i.Price, CurrencyType.ChaosOrb).Value;
-                        else
-                            value = i.Price.Value;
-                        
-                        Belt b = new Belt(i.Corrupted, i.ImplicitMods, i.ExplicitMods)
-                        {
-                            CalibrationPrice = value
-                        };
-                        loadedBelts.Add(b);
-                    }
-                }
-
-                Console.WriteLine("Number of belts loaded:" + loadedBelts.Count);
-                if (string.IsNullOrEmpty(c.NextChangeID))
-                {
-                    break;
-                }
-                currentChangeId = c.NextChangeID;
-
-                if (loadedBelts.Count > 1000)
-                    break;
-            }
-
-            beltNetwork.LearnFromBelts(loadedBelts.ToArray());
+            Console.WriteLine("The networks are training in the background. Press any key to evaluate belts with current data.");
+            Console.ReadKey();
 
             var testBelt = new Belt();
             testBelt.AddImplicit(@"+40 to maximum Life");
@@ -108,50 +64,14 @@ namespace Predictive
             testBelt2.AddExplicit(@"+10% to Cold Resistance");
             testBelt2.AddExplicit(@"+10% to Lightning Resistance");
             testBelt2.AddExplicit(@"+3 to Armour");
-
             
-            foreach (Belt b in loadedBelts)
-            {
-                beltNetwork.PredictBelt(b);
-                Console.WriteLine(b.ToString());
-            }
-
-            beltNetwork.PredictBelt(testBelt);
+            trainer.BeltNetwork.PredictBelt(testBelt);
             Console.WriteLine(testBelt.ToString());
 
-            beltNetwork.PredictBelt(testBelt2);
+            trainer.BeltNetwork.PredictBelt(testBelt2);
             Console.WriteLine(testBelt2.ToString());
 
-            double accuracy = 0;
-            int hits = 0;
-            foreach(Belt b in loadedBelts)
-            {
-                double provided = b.CalibrationPrice.Value;
-                if (provided > Belt.MaxSupportedChaosPrice) provided = Belt.MaxSupportedChaosPrice;
-
-                double predicted = b.CalculatedPrice.Value;
-
-                double currentBeltAccuracy;
-                if (provided == predicted)
-                {
-                    currentBeltAccuracy = 100;
-                        
-                }
-                else if (provided < predicted)
-                {
-                    currentBeltAccuracy = 100 * provided / predicted;
-                }
-                else
-                {
-                    currentBeltAccuracy = 100 * predicted / provided;
-                }
-
-                accuracy = ((accuracy * hits) + currentBeltAccuracy) / (hits + 1);
-                hits++;
-            }
-
-            Console.WriteLine($"Network accuracy: {accuracy}");
             Console.ReadKey();
         }
-    }
+    }  
 }

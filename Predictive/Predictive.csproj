@@ -59,6 +59,7 @@
     <Compile Include="Belts\Belt.cs" />
     <Compile Include="Belts\BeltNetwork.cs" />
     <Compile Include="GeneralEnums.cs" />
+    <Compile Include="NetworkTrainer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AffixUtils.cs" />
