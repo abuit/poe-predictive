@@ -4,10 +4,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{052AED0B-5682-4AAF-BD36-9F827858E61F}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>POEStash</RootNamespace>
-    <AssemblyName>POEStash.NET</AssemblyName>
+    <ProjectGuid>{2D431F0D-897A-4BD7-AB25-FED880080293}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>POEStashTest</RootNamespace>
+    <AssemblyName>POEStashTest</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -31,14 +31,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject>
-    </StartupObject>
-  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -49,27 +42,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Currency\ConversionTable.cs" />
-    <Compile Include="Json\JsonCache.cs" />
-    <Compile Include="Json\APIParserSource.cs" />
-    <Compile Include="Json\CachedJsonParserSource.cs" />
-    <Compile Include="Currency\Currency.cs" />
-    <Compile Include="Json\FileParserSource.cs" />
-    <Compile Include="FrameType.cs" />
-    <Compile Include="Json\IParserSource.cs" />
-    <Compile Include="Item.cs" />
-    <Compile Include="Json\JsonScientificConverter.cs" />
-    <Compile Include="POEStash.cs" />
+    <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Property.cs" />
-    <Compile Include="Socket.cs" />
-    <Compile Include="Stash.cs" />
-    <Compile Include="StashCollection.cs" />
-    <Compile Include="ValueTypes.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

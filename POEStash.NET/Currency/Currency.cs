@@ -21,7 +21,8 @@ namespace POEStash
         OrbOfRegret,
         RegalOrb,
         DivineOrb,
-        VaalOrb
+        VaalOrb,
+        COUNT
     }
 
     public struct Currency : IEquatable<Currency>
@@ -157,7 +158,7 @@ namespace POEStash
         public CurrencyType CurrencyType { get; private set; }
         public float Value { get; private set; }
         
-        private Currency(CurrencyType type, float value)
+        public Currency(CurrencyType type, float value)
         {
             this.CurrencyType = type;
             this.Value = value;
