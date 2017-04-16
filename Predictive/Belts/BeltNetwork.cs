@@ -21,7 +21,7 @@ namespace Predictive
                 f,
                 1 + BeltImplicits.Count() + BeltExplicits.Count(),
                 //Hidden layers:
-                5,
+                7,
                 // Regression mode: one output
                 1
             );
@@ -29,7 +29,7 @@ namespace Predictive
             teacher = new BackPropagationLearning(network)
             {
                 LearningRate = 1,
-                Momentum = 0.2
+                Momentum = 0.5
             };
         }
 
@@ -38,8 +38,19 @@ namespace Predictive
         {
             var beltInputArray = belts.Select(b => b.CreateInputVector()).ToArray();
             var beltResultArray = belts.Select(b => b.CreateCalibrationOutputVector()).ToArray();
-            for (int i = 0; i < 1000; i++)
+
+            Console.Write("Loading data into the network");
+
+            int trainingCycles = 10000;
+
+            for (int i = 0; i < trainingCycles; i++)
+            {
+                if (i % (trainingCycles / 20) == 0)
+                    Console.Write(".");
                 teacher.RunEpoch(beltInputArray, beltResultArray);
+            }
+            Console.WriteLine();
+            Console.WriteLine("Done!");
         }
 
         //Learns iteratively
@@ -49,11 +60,7 @@ namespace Predictive
                 throw new ArgumentException("Calibration belt has no chaos price");
 
             double[] beltArray = belt.CreateInputVector();
-
-            //Console.WriteLine("Before:" + PredictBelt(belt));
-            //Console.WriteLine("Predicted:" + belt.CalibrationPrice);
             teacher.Run(beltArray, belt.CreateCalibrationOutputVector());
-            //Console.WriteLine("After:" + PredictBelt(belt));
         }
 
         public double PredictBelt(Belt belt)

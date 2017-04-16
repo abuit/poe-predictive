@@ -8,7 +8,7 @@ namespace Predictive
     public class Belt
     {
         //The maximum price the neural network will be able to suggest.
-        private readonly static int MaxSupportedChaosPrice = 250;
+        public readonly static int MaxSupportedChaosPrice = 250;
 
         //The price to calibrate this belt with.
         public double? CalibrationPrice;
@@ -155,10 +155,10 @@ namespace Predictive
             //Corruptions
             ChaosResist = Regex.Escape($"+{CAPTURE}% to Chaos Resistance").Replace(CAPTURE, @"(\d*)"),
             AvoidShock = Regex.Escape($"{CAPTURE}% chance to Avoid being Shocked").Replace(CAPTURE, @"(\d*)"),
-            RadiusAoE = Regex.Escape($"{CAPTURE}% increased Radius of Area Skills").Replace(CAPTURE, @"(\d*)"),
+            AreaAoE = Regex.Escape($"{CAPTURE}% increased Area of Effect of Area Skills").Replace(CAPTURE, @"(\d*)"),
             SkillDuration = Regex.Escape($"{CAPTURE}% increased Skill Effect Duration").Replace(CAPTURE, @"(\d*)"),
-            AddTrap = Regex.Escape($"Can set up to {CAPTURE} additional trap").Replace(CAPTURE, @"(\d*)"),
-            Endurance = Regex.Escape($"+{CAPTURE} Maximum Endurance Charge").Replace(CAPTURE, @"(\d*)"),
+            AddTrap = Regex.Escape($"Can have up to {CAPTURE} additional Trap placed at a time").Replace(CAPTURE, @"(\d*)"),
+            Endurance = Regex.Escape($"+{CAPTURE} to Maximum Endurance Charges").Replace(CAPTURE, @"(\d*)"),
             Purity = Regex.Escape($"Grants level {CAPTURE} Purity of Elements Skill").Replace(CAPTURE, @"(\d*)"),
             Clarity = Regex.Escape($"Grants level {CAPTURE} Clarity Skill").Replace(CAPTURE, @"(\d*)"),
             Vitality = Regex.Escape($"Grants level {CAPTURE} Vitality Skill").Replace(CAPTURE, @"(\d*)");
@@ -186,7 +186,7 @@ namespace Predictive
             yield return new BeltExplicits(CrystalBelt, 60, 80);
             yield return new BeltExplicits(ChaosResist, 2, 4);
             yield return new BeltExplicits(AvoidShock, 10, 20);
-            yield return new BeltExplicits(RadiusAoE, 4, 6);
+            yield return new BeltExplicits(AreaAoE, 4, 6);
             yield return new BeltExplicits(SkillDuration, 5, 8);
             yield return new BeltExplicits(AddTrap, 1, 1);
             yield return new BeltExplicits(Endurance, 1, 1);
@@ -223,7 +223,9 @@ namespace Predictive
             Strength = Regex.Escape($"+{CAPTURE} to Strength").Replace(CAPTURE, @"(\d*)"),
             StunDuration = Regex.Escape($"{CAPTURE}% increased Stun Duration on Enemies").Replace(CAPTURE, @"(\d*)"),
             StunBlockRecovery = Regex.Escape($"{CAPTURE}% increased Stun and Block Recovery").Replace(CAPTURE, @"(\d*)"),
-            StunTreshold = Regex.Escape($"{CAPTURE}% reduced Enemy Stun Threshold").Replace(CAPTURE, @"(\d*)");
+            StunTreshold = Regex.Escape($"{CAPTURE}% reduced Enemy Stun Threshold").Replace(CAPTURE, @"(\d*)"),
+            //Leo
+            LeoMod = Regex.Escape($"{CAPTURE}% increased Damage").Replace(CAPTURE, @"(\d*)");
 
         public string Pattern;
         public double MinValue;
@@ -257,6 +259,7 @@ namespace Predictive
             yield return new BeltExplicits(StunDuration, 11, 35);
             yield return new BeltExplicits(StunBlockRecovery, 11, 28);
             yield return new BeltExplicits(StunTreshold, 5, 15);
+            yield return new BeltExplicits(LeoMod, 5, 15);
         }
 
         public static int Count()
