@@ -5,6 +5,8 @@ namespace POEStash
     [JsonObject]
     public class Item
     {
+        private string typeLine = "";
+
         [JsonProperty("verified")]
         public bool Verified { get; set; }
 
@@ -33,7 +35,15 @@ namespace POEStash
         public string Name { get; set; } = "";
 
         [JsonProperty("typeLine")]
-        public string TypeLine { get; set; } = "";
+        public string TypeLine
+        {
+            get { return typeLine; }
+            set
+            {
+                typeLine = value;
+                ItemType = BaseTypes.GetItemType(typeLine);
+            }
+        }
 
         [JsonProperty("identified")]
         public bool Identified { get; set; }
@@ -144,6 +154,8 @@ namespace POEStash
                 return price;
             }
         }
+
+        public ItemType ItemType { get; private set; } = ItemType.Unknown;
 
         public Item() { }
     }
