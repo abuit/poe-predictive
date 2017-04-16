@@ -6,6 +6,7 @@ namespace POEStash
     public class Item
     {
         private string typeLine = "";
+        private string name = "";
 
         [JsonProperty("verified")]
         public bool Verified { get; set; }
@@ -32,7 +33,15 @@ namespace POEStash
         public Socket[] Sockets { get; set; } = new Socket[0];
 
         [JsonProperty("name")]
-        public string Name { get; set; } = "";
+        public string Name
+        {
+            get { return name; }
+            set
+            {
+                name = StripLocalization(value);
+                IsUnique = BaseTypes.IsUnique(name);
+            }
+        }
 
         [JsonProperty("typeLine")]
         public string TypeLine
@@ -40,8 +49,9 @@ namespace POEStash
             get { return typeLine; }
             set
             {
-                typeLine = value;
+                typeLine = StripLocalization(value);
                 ItemType = BaseTypes.GetItemType(typeLine);
+                //IsUnique = BaseTypes.IsUnique(typeLine);
             }
         }
 
@@ -157,6 +167,18 @@ namespace POEStash
 
         public ItemType ItemType { get; private set; } = ItemType.Unknown;
 
+        public bool IsUnique { get; private set; } = false;
+
         public Item() { }
+
+        private string StripLocalization(string input)
+        {
+            if (input.StartsWith("<<set:MS>><<set:M>><<set:S>>"))
+            {
+                return input.Substring(28, input.Length - 28);
+            }
+
+            return input;
+        }
     }
 }
