@@ -39,18 +39,15 @@ namespace Predictive
             var beltInputArray = belts.Select(b => b.CreateInputVector()).ToArray();
             var beltResultArray = belts.Select(b => b.CreateCalibrationOutputVector()).ToArray();
 
-            Console.Write("Loading data into the network");
+            Console.WriteLine("Loading data into the network...");
 
             int trainingCycles = 10000;
 
             for (int i = 0; i < trainingCycles; i++)
             {
-                if (i % (trainingCycles / 20) == 0)
-                    Console.Write(".");
                 teacher.RunEpoch(beltInputArray, beltResultArray);
             }
-            Console.WriteLine();
-            Console.WriteLine("Done!");
+            Console.WriteLine("Data loaded!");
         }
 
         //Learns iteratively

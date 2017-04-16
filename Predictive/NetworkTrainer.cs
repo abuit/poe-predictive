@@ -40,6 +40,7 @@ namespace Predictive
                 lastCycleResult = await PerformCycle();
 
                 Console.WriteLine($"Accuracy of current belt network with {lastCycleResult.LoadedBelts.Count} belts: {lastCycleResult.BeltNetwork.DetermineAccuracy(lastCycleResult.LoadedBelts)} %");
+                Console.WriteLine(string.Empty);
             }
         }
 
@@ -89,7 +90,6 @@ namespace Predictive
             }
 
             Console.WriteLine($"Number of belts loaded: {loadedBelts.Count}. This cycle there were {loadedBelts.Count - knownBeltsCount} new belts added.");
-            
             //We create a new network here to learn from the new dataset. Is it worth learning on the existing (cloned) network?
             BeltNetwork beltNetwork = new BeltNetwork();
             beltNetwork.LearnFromBelts(loadedBelts.ToArray());
