@@ -12,12 +12,7 @@ namespace Predictive
     class Program
     {
         //Set the starting point to the first change ID of the specific league.
-        static readonly string startingPoint = "0";
-
         static ConversionTable conversionTable;
-        static BeltNetwork beltNetwork;
-
-        static bool loadingHalted = false;
 
         public static void Main(string[] args)
         {
