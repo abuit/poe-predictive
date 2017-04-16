@@ -8,7 +8,7 @@ namespace Predictive
     public class Belt
     {
         //The maximum price the neural network will be able to suggest.
-        private readonly static int MaxSupportedChaosPrice = 250;
+        public readonly static int MaxSupportedChaosPrice = 250;
 
         //The price to calibrate this belt with.
         public double? CalibrationPrice;

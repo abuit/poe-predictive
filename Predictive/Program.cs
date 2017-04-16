@@ -121,6 +121,35 @@ namespace Predictive
             beltNetwork.PredictBelt(testBelt2);
             Console.WriteLine($"Triple resist minimized hp/armour belt: {(int)testBelt2.CalculatedPrice} chaos!");
 
+            double accuracy = 0;
+            int hits = 0;
+            foreach(Belt b in loadedBelts)
+            {
+                double provided = b.CalibrationPrice.Value;
+                if (provided > Belt.MaxSupportedChaosPrice) provided = Belt.MaxSupportedChaosPrice;
+
+                double predicted = b.CalculatedPrice.Value;
+
+                double currentBeltAccuracy;
+                if (provided == predicted)
+                {
+                    currentBeltAccuracy = 100;
+                        
+                }
+                else if (provided < predicted)
+                {
+                    currentBeltAccuracy = 100 * provided / predicted;
+                }
+                else
+                {
+                    currentBeltAccuracy = 100 * predicted / provided;
+                }
+
+                accuracy = ((accuracy * hits) + currentBeltAccuracy) / (hits + 1);
+                hits++;
+            }
+
+            Console.WriteLine($"Network accuracy: {accuracy}");
             Console.ReadKey();
         }
     }

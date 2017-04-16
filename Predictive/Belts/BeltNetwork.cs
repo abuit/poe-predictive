@@ -21,7 +21,7 @@ namespace Predictive
                 f,
                 1 + BeltImplicits.Count() + BeltExplicits.Count(),
                 //Hidden layers:
-                5,
+                7,
                 // Regression mode: one output
                 1
             );
@@ -29,7 +29,7 @@ namespace Predictive
             teacher = new BackPropagationLearning(network)
             {
                 LearningRate = 1,
-                Momentum = 0.2
+                Momentum = 0.5
             };
         }
 
