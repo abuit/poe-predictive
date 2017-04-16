@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POEStash.NET", "POEStash.NE
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "POEStashTests", "POEStashTests\POEStashTests.csproj", "{D2F4D0BA-76F5-4CEC-A26A-E7E0869C089E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PredictiveConsole", "PredictiveConsole\PredictiveConsole.csproj", "{AD5B99EB-0D03-4DC0-A9EE-8AE8150957E6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{D2F4D0BA-76F5-4CEC-A26A-E7E0869C089E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D2F4D0BA-76F5-4CEC-A26A-E7E0869C089E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D2F4D0BA-76F5-4CEC-A26A-E7E0869C089E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD5B99EB-0D03-4DC0-A9EE-8AE8150957E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD5B99EB-0D03-4DC0-A9EE-8AE8150957E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD5B99EB-0D03-4DC0-A9EE-8AE8150957E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD5B99EB-0D03-4DC0-A9EE-8AE8150957E6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
