@@ -151,6 +151,7 @@ namespace Predictive
             yield return new BeltExplicits(RusticSash, 12, 24);
             yield return new BeltExplicits(HeavyBelt, 25, 35);
             yield return new BeltExplicits(LeatherBelt, 25, 40);
+            yield return new BeltExplicits(ClothBelt, 15, 25);
             yield return new BeltExplicits(StuddedBelt, 20, 30);
             yield return new BeltExplicits(VanguardBelt, 260, 320);
             yield return new BeltExplicits(CrystalBelt, 60, 80);
