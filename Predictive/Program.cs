@@ -9,14 +9,16 @@ using System.Threading.Tasks;
 namespace Predictive
 {
     class Program
-    {
-        static BeltNetwork beltNetwork = new BeltNetwork();
+    {   
+        //Set the starting point to the first change ID of the specific league.
+        static readonly string startingPoint = "0";        
 
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
+            BeltNetwork beltNetwork = new BeltNetwork();
             List<Belt> loadedBelts = new List<Belt>();
 
-            string currentChangeId = "0";
+            string currentChangeId = startingPoint;
             while (true)
             {
                 Console.WriteLine($"Loading for {currentChangeId}...");
@@ -26,16 +28,17 @@ namespace Predictive
                 {
                     foreach (Item i in s.Items)
                     {
-                        //Check for the belt
+                        //Only belts for now
                         if (i.TypeLine.IndexOf("Belt", 0, StringComparison.OrdinalIgnoreCase) == -1)
                         {
                             continue;
                         }
 
-                        //No uniques
+                        //No uniques for now
                         if (i.FrameType != FrameType.Magic && i.FrameType != FrameType.Rare)
                             continue;
 
+                        //Ignore non-chaos priced items for now
                         if (i.Price.IsEmpty() || i.Price.CurrencyType != CurrencyType.ChaosOrb)
                             continue;
 
@@ -58,9 +61,11 @@ namespace Predictive
                     break;
             }
 
+            //Find the maximum belt price. This way the price can be normalized for for the networks' output.
             Belt.MaxChaosPrice = loadedBelts.Max(b => (int)b.CalibrationPrice);
 
             beltNetwork.LearnFromBelts(loadedBelts.ToArray());
+
             /*
             var testBelt = new Belt();
             testBelt.AddExplicit(@"+99 to maximum Life");
