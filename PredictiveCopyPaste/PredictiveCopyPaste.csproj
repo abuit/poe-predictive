@@ -43,5 +43,11 @@
     <Compile Include="CopyPasteParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\POEStash.NET\POEStash.NET.csproj">
+      <Project>{052aed0b-5682-4aaf-bd36-9f827858e61f}</Project>
+      <Name>POEStash.NET</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

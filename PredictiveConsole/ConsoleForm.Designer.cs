@@ -122,6 +122,7 @@
             this.DeterminePrice.TabIndex = 5;
             this.DeterminePrice.Text = "Determine price";
             this.DeterminePrice.UseVisualStyleBackColor = true;
+            this.DeterminePrice.Click += new System.EventHandler(this.DeterminePrice_Click);
             // 
             // ConsoleForm
             // 

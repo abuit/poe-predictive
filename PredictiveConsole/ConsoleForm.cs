@@ -1,5 +1,6 @@
 ﻿using POEStash;
 using Predictive;
+using PredictiveCopyPaste;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -88,6 +89,30 @@ namespace PredictiveConsole
         {
             this.ConsoleTextBox.SelectionStart = this.ConsoleTextBox.TextLength;
             this.ConsoleTextBox.ScrollToCaret();
+        }
+
+        private void DeterminePrice_Click(object sender, EventArgs e)
+        {
+            CopyPasteParser parser = new CopyPasteParser(this.InputData.Text);
+            if (parser.TryParse())
+            {
+                if (parser.ItemType != ItemType.Belt)
+                {
+                    ResultLabel.Text = "Only belts are supported atm";
+                    return;
+                }
+                else
+                {
+                    Belt b = new Belt(parser.Corrupted, parser.Implicits, parser.Explicits);
+                    trainer.BeltNetwork.PredictBelt(b);
+                    ResultLabel.Text = $"{b.CalculatedPrice} Chaos";
+                }
+            }
+            else
+            {
+                ResultLabel.Text = "Couldn't parse item";
+                return;
+            }
         }
     }
 }
