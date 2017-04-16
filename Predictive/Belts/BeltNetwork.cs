@@ -19,9 +19,9 @@ namespace Predictive
             //Regression mode
             network = new ActivationNetwork(
                 f,
-                BeltImplicits.Count() + BeltExplicits.Count(),
+                1 + BeltImplicits.Count() + BeltExplicits.Count(),
                 //Hidden layers:
-                10,
+                5,
                 // Regression mode: one output
                 1
             );

@@ -42,7 +42,7 @@ namespace Predictive
                         if (i.Price.IsEmpty() || i.Price.CurrencyType != CurrencyType.ChaosOrb)
                             continue;
 
-                        Belt b = new Belt(i.ImplicitMods, i.ExplicitMods)
+                        Belt b = new Belt(i.Corrupted, i.ImplicitMods, i.ExplicitMods)
                         {
                             CalibrationPrice = i.Price.Value
                         };
@@ -57,7 +57,7 @@ namespace Predictive
                 }
                 currentChangeId = c.NextChangeID;
 
-                if (loadedBelts.Count > 50)
+                if (loadedBelts.Count > 1000)
                     break;
             }
 
@@ -82,7 +82,7 @@ namespace Predictive
             testBelt2.AddExplicit(@"+5% to Chaos Resistance");
             testBelt2.AddExplicit(@"+3 to Armour");
 
-
+            
             foreach (Belt b in loadedBelts)
             {
                 beltNetwork.PredictBelt(b);

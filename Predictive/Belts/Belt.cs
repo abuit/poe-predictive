@@ -16,19 +16,22 @@ namespace Predictive
         //The actual predicted price of the belt.
         public double? CalculatedPrice;
 
+        public bool Corrupted { get; set; }
+
         private string[] implicitMods;
         private string[] explicitMods;
 
         public Belt()
         {
+            Corrupted = false;
             implicitMods = new string[0];
             explicitMods = new string[0];
         }
 
-        public Belt(string[] implicitMods, string[] explicits)
+        public Belt(bool corrupted, string[] implicitMods, string[] explicitMods)
         {
             this.implicitMods = implicitMods;
-            this.explicitMods = explicits;
+            this.explicitMods = explicitMods;
         }
 
         public void AddImplicit(string impl)
@@ -46,7 +49,7 @@ namespace Predictive
             old.CopyTo(explicitMods, 0);
             explicitMods[explicitMods.Length - 1] = expl;
         }
-        
+
         /// <summary>
         /// Processes the output vector to a readable price.
         /// </summary>
@@ -68,13 +71,26 @@ namespace Predictive
         }
 
         /// <summary>
+        /// The input vector size for a belt. Includes an item for each property.
+        /// </summary>
+        public int BeltInputVectorSize
+        {
+            get
+            {
+                return 1 + BeltImplicits.Count() + BeltExplicits.Count();
+            }
+        }
+
+        /// <summary>
         /// Creates the input vector for this belt.
         /// Ensure this input vector matches the amount of neurons in the first layer of the network.
         /// </summary>
         public double[] CreateInputVector()
         {
-            double[] inputArray = new double[BeltImplicits.Count() + BeltExplicits.Count()];
-            int indx = 0;
+            double[] inputArray = new double[BeltInputVectorSize];
+            inputArray[0] = Corrupted ? 0 : 1;
+
+            int indx = 1;
             
             HashSet<string> matchedImplicits = new HashSet<string>();
             foreach (var possibleImplcit in BeltImplicits.All())
@@ -125,6 +141,7 @@ namespace Predictive
     {
         const string CAPTURE = "CAPTURE";
         private static readonly string
+            //Default
             ChainBelt = Regex.Escape($"+{CAPTURE} to maximum Energy Shield").Replace(CAPTURE, @"(\d*)"),
             RusticSash = Regex.Escape($"{CAPTURE}% increased Physical Damage").Replace(CAPTURE, @"(\d*)"),
             HeavyBelt = Regex.Escape($"+{CAPTURE} to Strength").Replace(CAPTURE, @"(\d*)"),
@@ -132,7 +149,16 @@ namespace Predictive
             ClothBelt = Regex.Escape($"{CAPTURE}% increased Stun and Block Recovery").Replace(CAPTURE, @"(\d*)"),
             StuddedBelt = Regex.Escape($"{CAPTURE}% increased Stun Duration on Enemies").Replace(CAPTURE, @"(\d*)"),
             VanguardBelt = Regex.Escape($"+{CAPTURE} to Armour and Evasion Rating").Replace(CAPTURE, @"(\d*)"),
-            CrystalBelt = Regex.Escape($"+{CAPTURE} to maximum Energy Shield").Replace(CAPTURE, @"(\d*)");
+            CrystalBelt = Regex.Escape($"+{CAPTURE} to maximum Energy Shield").Replace(CAPTURE, @"(\d*)"),
+            //Corruptions
+            ChaosResist = Regex.Escape($"+{CAPTURE}% to Chaos Resistance").Replace(CAPTURE, @"(\d*)"),
+            AvoidShock = Regex.Escape($"{CAPTURE}% chance to Avoid being Shocked").Replace(CAPTURE, @"(\d*)"),
+            RadiusAoE = Regex.Escape($"{CAPTURE}% increased Radius of Area Skills").Replace(CAPTURE, @"(\d*)"),
+            SkillDuration = Regex.Escape($"{CAPTURE}% increased Skill Effect Duration").Replace(CAPTURE, @"(\d*)"),
+            AddTrap = Regex.Escape($"Can set up to {CAPTURE} additional trap").Replace(CAPTURE, @"(\d*)"),
+            Purity = Regex.Escape($"Grants level {CAPTURE} Purity of Elements Skill").Replace(CAPTURE, @"(\d*)"),
+            Clarity = Regex.Escape($"Grants level {CAPTURE} Clarity Skill").Replace(CAPTURE, @"(\d*)"),
+            Vitality = Regex.Escape($"Grants level {CAPTURE} Vitality Skill").Replace(CAPTURE, @"(\d*)");
 
         public string Pattern;
         public double MinValue;
@@ -155,6 +181,14 @@ namespace Predictive
             yield return new BeltExplicits(StuddedBelt, 20, 30);
             yield return new BeltExplicits(VanguardBelt, 260, 320);
             yield return new BeltExplicits(CrystalBelt, 60, 80);
+            yield return new BeltExplicits(ChaosResist, 2, 4);
+            yield return new BeltExplicits(AvoidShock, 10, 20);
+            yield return new BeltExplicits(RadiusAoE, 4, 6);
+            yield return new BeltExplicits(SkillDuration, 5, 8);
+            yield return new BeltExplicits(AddTrap, 1, 1);
+            yield return new BeltExplicits(Purity, 15, 15);
+            yield return new BeltExplicits(Clarity, 4, 16);
+            yield return new BeltExplicits(Vitality, 15, 15);
         }
 
         public static int Count()
