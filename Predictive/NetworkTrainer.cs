@@ -18,7 +18,7 @@ namespace Predictive
 
         public void StartTraining()
         {
-            lastCycleResult = new TrainingCycleResult("0", new BeltNetwork(), new List<Belt>());
+            lastCycleResult = new TrainingCycleResult("45339225-47984329-44953841-51680241-48352319", new BeltNetwork(), new List<Belt>());
             Task.Factory.StartNew(StartTrainingInternal);
         }
 
