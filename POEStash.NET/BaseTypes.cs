@@ -86,20 +86,23 @@ namespace POEStash
         public static string[] BaseTypes =
         {
             "Breach Ring",
-            "Coral Ring",
             "Iron Ring",
+            "Coral Ring",
             "Paua Ring",
-            "Unset Ring",
             "Sapphire Ring",
             "Topaz Ring",
+            "Golden Hoop",
+            "Jet Ring",
             "Ruby Ring",
+            "Gold Ring",
+            "Two-Stone Ring",
             "Diamond Ring",
             "Moonstone Ring",
-            "Two-Stone Ring",
-            "Amethyst Ring",
             "Prismatic Ring",
-            "Opal Ring",
+            "Amethyst Ring",
+            "Unset Ring",
             "Steel Ring",
+            "Opal Ring",
         };
     }
 
