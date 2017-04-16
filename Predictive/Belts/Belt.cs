@@ -1,6 +1,4 @@
-﻿using AForge.Neuro;
-using AForge.Neuro.Learning;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -9,13 +7,16 @@ namespace Predictive
 {
     public class Belt
     {
-        //The neural network will give 1 as output when it intends 500.
+        //The maximum price the neural network will be able to suggest.
         public static int MaxChaosPrice = 100;
 
+        //The price to calibrate this belt with.
         public double? CalibrationPrice;
+
+        //The actual predicted price of the belt.
         public double? CalculatedPrice;
 
-        //private string[] implicitMods
+      //private string[] implicitMods
         private string[] explicits;
 
         public Belt()
@@ -35,12 +36,18 @@ namespace Predictive
             old.CopyTo(explicits, 0);
             explicits[explicits.Length - 1] = expl;
         }
-
+        
+        /// <summary>
+        /// Processes the output vector to a readable price.
+        /// </summary>
         public void ProcessOutputVector(double[] result)
         {
             CalculatedPrice = result[0] * MaxChaosPrice;
         }
 
+        /// <summary>
+        /// Creates the desired output vector for this belt.
+        /// </summary>
         public double[] CreateCalibrationOutputVector()
         {
             if (CalibrationPrice.Value > MaxChaosPrice)
@@ -50,6 +57,10 @@ namespace Predictive
             return new double[] { normalized };
         }
 
+        /// <summary>
+        /// Creates the input vector for this belt.
+        /// Ensure this input vector matches the amount of neurons in the first layer of the network.
+        /// </summary>
         public double[] CreateInputVector()
         {
             double[] inputArray = new double[BeltExplicits.All().Count()];
@@ -59,7 +70,7 @@ namespace Predictive
             int indx = 0;
             foreach (var possibleExplicit in BeltExplicits.All())
             {
-                foreach(string expl in explicits.Where(e => !matchedExplicits.Contains(e)))
+                foreach (string expl in explicits.Where(e => !matchedExplicits.Contains(e)))
                 {
                     Match m = Regex.Match(expl, possibleExplicit.Pattern);
                     if (m.Success)
@@ -93,7 +104,7 @@ namespace Predictive
                 }
                 indx++;
             }
-            
+
             //Diagnostics:
             foreach (string unmatched in explicits.Where(e => !matchedExplicits.Contains(e)))
             {
@@ -109,7 +120,7 @@ namespace Predictive
 
     }
 
-    struct BeltExplicits 
+    struct BeltExplicits
     {
         const string CAPTURE = "CAPTURE";
         private static readonly string
@@ -165,61 +176,6 @@ namespace Predictive
             yield return new BeltExplicits(StunDuration, 11, 35);
             yield return new BeltExplicits(StunBlockRecovery, 11, 28);
             yield return new BeltExplicits(StunTreshold, 5, 15);
-        }
-    }
-
-    class BeltNetwork
-    {
-        private readonly BackPropagationLearning teacher;
-        private readonly ActivationNetwork network;
-
-        public BeltNetwork()
-        {
-            SigmoidFunction f = new SigmoidFunction(0.5);
-
-            //Regression mode
-            network = new ActivationNetwork(
-                f,
-                BeltExplicits.All().Count(), // Base & Affixes
-                //Hidden layers:
-                10,
-                // Regression mode: one output
-                1
-            );
-
-            teacher = new BackPropagationLearning(network);
-            teacher.LearningRate = 1;
-            teacher.Momentum = 0.2;
-        }
-
-        //Learns in an epoch
-        public void LearnFromBelts(params Belt[] belts)
-        {
-            var beltInputArray = belts.Select(b => b.CreateInputVector()).ToArray();
-            var beltResultArray = belts.Select(b => b.CreateCalibrationOutputVector()).ToArray();
-            for (int i = 0; i < 1000; i++)
-                teacher.RunEpoch(beltInputArray, beltResultArray);
-        }
-
-        //Learns iteratively
-        public void LearnFromBelt(Belt belt)
-        {
-            if (belt.CalibrationPrice == null)
-                throw new ArgumentException("Calibration belt has no chaos price");
-
-            double[] beltArray = belt.CreateInputVector();
-
-            //Console.WriteLine("Before:" + PredictBelt(belt));
-            //Console.WriteLine("Predicted:" + belt.CalibrationPrice);
-            teacher.Run(beltArray, belt.CreateCalibrationOutputVector());
-            //Console.WriteLine("After:" + PredictBelt(belt));
-        }
-
-        public double PredictBelt(Belt belt)
-        {
-            var result = network.Compute(belt.CreateInputVector());
-            belt.ProcessOutputVector(result);
-            return belt.CalculatedPrice.Value;
         }
     }
 }
