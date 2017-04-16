@@ -57,7 +57,7 @@ namespace Predictive
                 }
                 currentChangeId = c.NextChangeID;
 
-                if (loadedBelts.Count > 50)
+                if (loadedBelts.Count > 10000)
                     break;
             }
 
