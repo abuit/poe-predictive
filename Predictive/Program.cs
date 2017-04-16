@@ -15,6 +15,28 @@ namespace Predictive
 
         public static void Main(string[] args)
         {
+            //Based off of http://www.poeex.info/index/index/table/1
+            var rates = new Dictionary<CurrencyType, float>()
+            {
+                { CurrencyType.ChromaticOrb, 1f/13f },
+                { CurrencyType.OrbOfAlteration, 1f/13f },
+                { CurrencyType.JewellersOrb, 1f/7f },
+                { CurrencyType.OrbOfChance, 1f/5f },
+                { CurrencyType.CartographersChisel, 1/4f },
+                { CurrencyType.OrbOfFusing, 1f/2f },
+                { CurrencyType.OrbOfAlchemy, 1f/3.5f },
+                { CurrencyType.OrbOfScouring, 1f/1.8f },
+                { CurrencyType.BlessedOrb, 1f/1.3f },
+                { CurrencyType.OrbOfRegret, 1f },
+                { CurrencyType.RegalOrb, 1.3f},
+                { CurrencyType.GemcuttersPrism, 1.8f},
+                { CurrencyType.DivineOrb, 17f},
+                { CurrencyType.ExaltedOrb, 50f},
+                { CurrencyType.VaalOrb, 1f},
+            };
+            ConversionTable conversionTable = new ConversionTable(rates);
+
+            //Load belts
             BeltNetwork beltNetwork = new BeltNetwork();
             List<Belt> loadedBelts = new List<Belt>();
 
@@ -39,12 +61,19 @@ namespace Predictive
                             continue;
 
                         //Ignore non-chaos priced items for now
-                        if (i.Price.IsEmpty() || i.Price.CurrencyType != CurrencyType.ChaosOrb)
+                        if (i.Price.IsEmpty() || i.Price.CurrencyType == CurrencyType.Unknown)
                             continue;
 
+                        //Convert if needed
+                        float value;
+                        if (i.Price.CurrencyType != CurrencyType.ChaosOrb)
+                            value = conversionTable.ConvertTo(i.Price, CurrencyType.ChaosOrb).Value;
+                        else
+                            value = i.Price.Value;
+                        
                         Belt b = new Belt(i.Corrupted, i.ImplicitMods, i.ExplicitMods)
                         {
-                            CalibrationPrice = i.Price.Value
+                            CalibrationPrice = value
                         };
                         loadedBelts.Add(b);
                     }
@@ -60,9 +89,6 @@ namespace Predictive
                 if (loadedBelts.Count > 1000)
                     break;
             }
-
-            //Find the maximum belt price. This way the price can be normalized for for the networks' output.
-            Belt.MaxChaosPrice = loadedBelts.Max(b => (int)b.CalibrationPrice);
 
             beltNetwork.LearnFromBelts(loadedBelts.ToArray());
 

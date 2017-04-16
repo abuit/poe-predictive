@@ -8,7 +8,7 @@ namespace Predictive
     public class Belt
     {
         //The maximum price the neural network will be able to suggest.
-        public static int MaxChaosPrice = 100;
+        private readonly static int MaxSupportedChaosPrice = 250;
 
         //The price to calibrate this belt with.
         public double? CalibrationPrice;
@@ -51,22 +51,24 @@ namespace Predictive
         }
 
         /// <summary>
-        /// Processes the output vector to a readable price.
+        /// Processes the output vector to a readable price in Chaos.
         /// </summary>
         public void ProcessOutputVector(double[] result)
         {
-            CalculatedPrice = result[0] * MaxChaosPrice;
+            CalculatedPrice = result[0] * MaxSupportedChaosPrice;
         }
 
         /// <summary>
         /// Creates the desired output vector for this belt.
+        /// Normalizes the value using the maximum supported chaos value.
         /// </summary>
         public double[] CreateCalibrationOutputVector()
         {
-            if (CalibrationPrice.Value > MaxChaosPrice)
-                CalibrationPrice = MaxChaosPrice;
+            var price = CalibrationPrice.Value;
+            if (price > MaxSupportedChaosPrice)
+                price = MaxSupportedChaosPrice;
 
-            double normalized = CalibrationPrice.Value / MaxChaosPrice;
+            double normalized = price / MaxSupportedChaosPrice;
             return new double[] { normalized };
         }
 
@@ -156,6 +158,7 @@ namespace Predictive
             RadiusAoE = Regex.Escape($"{CAPTURE}% increased Radius of Area Skills").Replace(CAPTURE, @"(\d*)"),
             SkillDuration = Regex.Escape($"{CAPTURE}% increased Skill Effect Duration").Replace(CAPTURE, @"(\d*)"),
             AddTrap = Regex.Escape($"Can set up to {CAPTURE} additional trap").Replace(CAPTURE, @"(\d*)"),
+            Endurance = Regex.Escape($"+{CAPTURE} Maximum Endurance Charge").Replace(CAPTURE, @"(\d*)"),
             Purity = Regex.Escape($"Grants level {CAPTURE} Purity of Elements Skill").Replace(CAPTURE, @"(\d*)"),
             Clarity = Regex.Escape($"Grants level {CAPTURE} Clarity Skill").Replace(CAPTURE, @"(\d*)"),
             Vitality = Regex.Escape($"Grants level {CAPTURE} Vitality Skill").Replace(CAPTURE, @"(\d*)");
@@ -186,6 +189,7 @@ namespace Predictive
             yield return new BeltExplicits(RadiusAoE, 4, 6);
             yield return new BeltExplicits(SkillDuration, 5, 8);
             yield return new BeltExplicits(AddTrap, 1, 1);
+            yield return new BeltExplicits(Endurance, 1, 1);
             yield return new BeltExplicits(Purity, 15, 15);
             yield return new BeltExplicits(Clarity, 4, 16);
             yield return new BeltExplicits(Vitality, 15, 15);
