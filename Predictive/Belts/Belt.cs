@@ -158,7 +158,7 @@ namespace Predictive
             RadiusAoE = Regex.Escape($"{CAPTURE}% increased Radius of Area Skills").Replace(CAPTURE, @"(\d*)"),
             SkillDuration = Regex.Escape($"{CAPTURE}% increased Skill Effect Duration").Replace(CAPTURE, @"(\d*)"),
             AddTrap = Regex.Escape($"Can set up to {CAPTURE} additional trap").Replace(CAPTURE, @"(\d*)"),
-            Endurance = Regex.Escape($"+{CAPTURE} Maximum Endurance Charge").Replace(CAPTURE, @"(\d*)"),
+            Endurance = Regex.Escape($"+{CAPTURE} to Maximum Endurance Charges").Replace(CAPTURE, @"(\d*)"),
             Purity = Regex.Escape($"Grants level {CAPTURE} Purity of Elements Skill").Replace(CAPTURE, @"(\d*)"),
             Clarity = Regex.Escape($"Grants level {CAPTURE} Clarity Skill").Replace(CAPTURE, @"(\d*)"),
             Vitality = Regex.Escape($"Grants level {CAPTURE} Vitality Skill").Replace(CAPTURE, @"(\d*)");
