@@ -12,7 +12,7 @@ namespace PredictiveCopyPaste
     {
         static readonly string WHATEVER = "WHATEVER";
 
-        static readonly string Separator = "--------";
+        static readonly string Separator = Regex.Escape($"--------");
         static readonly string QualityText = Regex.Escape($"Quality: +{WHATEVER}% (augmented)").Replace(WHATEVER, ".*");
         static readonly string ArmourText = Regex.Escape($"Armour: {WHATEVER}").Replace(WHATEVER, ".*");
         static readonly string EvasionText = Regex.Escape($"Evasion: {WHATEVER}").Replace(WHATEVER, ".*");
@@ -106,6 +106,8 @@ namespace PredictiveCopyPaste
 
         private void DeriveAffixes()
         {
+            bool namingDone = false;
+
             List<string> firstArray = new List<string>();
             bool firstArrayDone = false;
 
@@ -113,23 +115,38 @@ namespace PredictiveCopyPaste
 
             foreach (string line in dataLines)
             {
+                if (string.IsNullOrEmpty(line))
+                    continue;
+
+                //Try to hit the first separator first.
+                if (!namingDone)
+                {
+                    if (Regex.IsMatch(line, Separator))
+                        namingDone = true;
+                    else
+                        continue;
+                }
+
+                bool containsCrap = false;
                 foreach(string bullcrapRegex in BullCrap())
                 {
                     if (Regex.IsMatch(line, bullcrapRegex))
                     {
                         if (firstArray.Any())
                             firstArrayDone = true;
-                        continue;
-                    }
-                    else
-                    {
-                        if (!firstArrayDone)
-                            firstArray.Add(line);
-                        else
-                            secondArray.Add(line);
-                    }
 
+                        containsCrap = true;
+                        break;
+                    }
                 }
+
+                if (containsCrap)
+                    continue;
+
+                if (!firstArrayDone)
+                    firstArray.Add(line);
+                else
+                    secondArray.Add(line);
             }
 
             Implicits = firstArray.ToArray();
