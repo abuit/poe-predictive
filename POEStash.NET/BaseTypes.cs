@@ -67,13 +67,13 @@ namespace POEStash
             if (Matches(BaseTypesWands.BaseTypes, typeString))                    return ItemType.Wand;
             if (Matches(BaseTypesJewels.BaseTypes, typeString))                   return ItemType.Jewel;
             if (Matches(BaseTypesMaps.BaseTypes, typeString))                     return ItemType.Map;
-            if (Matches(BaseTypesMapFragments.BaseTypes, typeString)) return ItemType.MapFragment;
+            if (Matches(BaseTypesMapFragments.BaseTypes, typeString))             return ItemType.MapFragment;
             if (Matches(BaseTypesSkillGems.BaseTypes, typeString))                return ItemType.SkillGem;
             if (Matches(BaseTypesDivinationCards.BaseTypes, typeString))          return ItemType.DivinationCard;
-            if (Matches(BaseTypesCurrencies.BaseTypes, typeString)) return ItemType.Currency;
-            if (Matches(BaseTypesFlasks.BaseTypes, typeString)) return ItemType.Flask;
+            if (Matches(BaseTypesCurrencies.BaseTypes, typeString))               return ItemType.Currency;
+            if (Matches(BaseTypesFlasks.BaseTypes, typeString))                   return ItemType.Flask;
 
-            return ItemType.Unknown;
+                                                                                  return ItemType.Unknown;
         }
 
         private static bool Matches(string[] baseTypes, string typeString)
