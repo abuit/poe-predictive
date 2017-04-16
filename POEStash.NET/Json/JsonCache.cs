@@ -44,20 +44,7 @@ namespace POEStash
                 return json;
             }
 
-            if (cache[id].Loaded)
-            {
-                json = cache[id].Json;
-            }
-            else
-            {
-                json = await LoadFromFile(id);
-
-                if (!string.IsNullOrEmpty(json))
-                {
-                    cache[id].Json = json;
-                    cache[id].Loaded = true;
-                }
-            }
+            json = await LoadFromFile(id);
 
             return json;
         }
@@ -108,21 +95,15 @@ namespace POEStash
         private class CachedJson
         {
             public string ID { get; }
-            public bool Loaded { get; set; }
-            public string Json { get; set; }
 
             public CachedJson(string id)
             {
                 ID = id;
-                Json = string.Empty;
-                Loaded = false;
             }
 
             public CachedJson(string id, string json)
             {
                 ID = id;
-                Json = json;
-                Loaded = true;
             }
         }
     }
