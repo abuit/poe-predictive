@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseTypes.cs" />
     <Compile Include="Currency\ConversionTable.cs" />
     <Compile Include="Json\JsonCache.cs" />
     <Compile Include="Json\APIParserSource.cs" />
