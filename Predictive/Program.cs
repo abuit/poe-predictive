@@ -57,7 +57,7 @@ namespace Predictive
                 }
                 currentChangeId = c.NextChangeID;
 
-                if (loadedBelts.Count > 1000)
+                if (loadedBelts.Count > 50)
                     break;
             }
 
@@ -66,31 +66,34 @@ namespace Predictive
 
             beltNetwork.LearnFromBelts(loadedBelts.ToArray());
 
-            /*
             var testBelt = new Belt();
+            testBelt.AddImplicit(@"+40 to maximum Life");
             testBelt.AddExplicit(@"+99 to maximum Life");
-            testBelt.AddExplicit(@"+40% to Fire Resistance");
-            testBelt.AddExplicit(@"+40% to Cold Resistance");
-            testBelt.AddExplicit(@"+40% to Chaos Resistance");
+            testBelt.AddExplicit(@"+48% to Fire Resistance");
+            testBelt.AddExplicit(@"+48% to Cold Resistance");
+            testBelt.AddExplicit(@"+35% to Chaos Resistance");
+            testBelt.AddExplicit(@"+460 to Armour");
 
-            var result = beltNetwork.PredictBelt(testBelt);
-            Console.WriteLine($"This belt ({nameof(testBelt)}) is probably worth around {result} chaos");
+            var testBelt2 = new Belt();
+            testBelt2.AddImplicit(@"+3 to maximum Life");
+            testBelt2.AddExplicit(@"+4 to maximum Life");
+            testBelt2.AddExplicit(@"+13% to Fire Resistance");
+            testBelt2.AddExplicit(@"+10% to Cold Resistance");
+            testBelt2.AddExplicit(@"+5% to Chaos Resistance");
+            testBelt2.AddExplicit(@"+3 to Armour");
 
-            testBelt = new Belt();
-            testBelt.AddExplicit(@"+15 to maximum Energy Shield");
-            testBelt.AddExplicit(@"+15% to Fire Resistance");
-            testBelt.AddExplicit(@"+15% to Cold Resistance");
-            testBelt.AddExplicit(@"+15% to Lightning Resistance");
 
-            result = beltNetwork.PredictBelt(testBelt);
-            Console.WriteLine($"This belt ({nameof(testBelt)}) is probably worth around {result} chaos");
-            */
-
-            foreach(Belt b in loadedBelts)
+            foreach (Belt b in loadedBelts)
             {
                 beltNetwork.PredictBelt(b);
                 Console.WriteLine($"Predicted price {(int)b.CalculatedPrice} chaos. Actual price: {(int)b.CalibrationPrice} chaos.");
             }
+
+            beltNetwork.PredictBelt(testBelt);
+            Console.WriteLine($"Triple resist maxed hp/armour belt: {(int)testBelt.CalculatedPrice} chaos!");
+
+            beltNetwork.PredictBelt(testBelt2);
+            Console.WriteLine($"Triple resist minimized hp/armour belt: {(int)testBelt2.CalculatedPrice} chaos!");
 
             Console.ReadKey();
         }

@@ -31,6 +31,14 @@ namespace Predictive
             this.explicitMods = explicits;
         }
 
+        public void AddImplicit(string impl)
+        {
+            var old = implicitMods;
+            implicitMods = new string[old.Length + 1];
+            old.CopyTo(implicitMods, 0);
+            implicitMods[implicitMods.Length - 1] = impl;
+        }
+
         public void AddExplicit(string expl)
         {
             var old = explicitMods;
@@ -69,13 +77,13 @@ namespace Predictive
             int indx = 0;
             
             HashSet<string> matchedImplicits = new HashSet<string>();
-            foreach (var possibleExplicit in BeltImplicits.All())
+            foreach (var possibleImplcit in BeltImplicits.All())
             {
-                foreach (string expl in implicitMods.Where(e => !matchedImplicits.Contains(e)))
+                foreach (string impl in implicitMods.Where(e => !matchedImplicits.Contains(e)))
                 {
-                    if (AffixUtils.TryMatch(expl, possibleExplicit.Pattern, possibleExplicit.MinValue, possibleExplicit.MaxValue, out double result))
+                    if (AffixUtils.TryMatch(impl, possibleImplcit.Pattern, possibleImplcit.MinValue, possibleImplcit.MaxValue, out double result))
                     {
-                        matchedImplicits.Add(expl);
+                        matchedImplicits.Add(impl);
                         inputArray[indx] = result;
                         break;
                     }
@@ -99,6 +107,11 @@ namespace Predictive
             }
 
             //Diagnostics:
+            foreach (string unmatched in implicitMods.Where(e => !matchedImplicits.Contains(e)))
+            {
+                System.Console.WriteLine($"Implicit was not recognised: {unmatched}");
+            }
+
             foreach (string unmatched in explicitMods.Where(e => !matchedExplicits.Contains(e)))
             {
                 System.Console.WriteLine($"Explicit was not recognised: {unmatched}");
@@ -114,12 +127,12 @@ namespace Predictive
         private static readonly string
             ChainBelt = Regex.Escape($"+{CAPTURE} to maximum Energy Shield").Replace(CAPTURE, @"(\d*)"),
             RusticSash = Regex.Escape($"{CAPTURE}% increased Physical Damage").Replace(CAPTURE, @"(\d*)"),
-            HeavyBelt = Regex.Escape($"{CAPTURE} to Strength").Replace(CAPTURE, @"(\d*)"),
+            HeavyBelt = Regex.Escape($"+{CAPTURE} to Strength").Replace(CAPTURE, @"(\d*)"),
             LeatherBelt = Regex.Escape($"+{CAPTURE} to maximum Life").Replace(CAPTURE, @"(\d*)"),
-            ClothBelt = Regex.Escape($"+{CAPTURE}% increased Stun and Block Recovery").Replace(CAPTURE, @"(\d*)"),
-            StuddedBelt = Regex.Escape($"+{CAPTURE}% increased Stun Duration on Enemies").Replace(CAPTURE, @"(\d*)"),
-            VanguardBelt = Regex.Escape($"{CAPTURE} to Armour and Evasion Rating").Replace(CAPTURE, @"(\d*)"),
-            CrystalBelt = Regex.Escape($"{CAPTURE} to maximum Energy Shield").Replace(CAPTURE, @"(\d*)");
+            ClothBelt = Regex.Escape($"{CAPTURE}% increased Stun and Block Recovery").Replace(CAPTURE, @"(\d*)"),
+            StuddedBelt = Regex.Escape($"{CAPTURE}% increased Stun Duration on Enemies").Replace(CAPTURE, @"(\d*)"),
+            VanguardBelt = Regex.Escape($"+{CAPTURE} to Armour and Evasion Rating").Replace(CAPTURE, @"(\d*)"),
+            CrystalBelt = Regex.Escape($"+{CAPTURE} to maximum Energy Shield").Replace(CAPTURE, @"(\d*)");
 
         public string Pattern;
         public double MinValue;
