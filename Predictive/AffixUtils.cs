@@ -23,11 +23,11 @@ namespace Predictive
                     }
                     else
                     {
-                        //Reserve 25% for the fact that a value exists, even if the value is low
-                        normalizedWeight = 0.25;
+                        //Reserve 5% for the fact that a value exists, even if the value is low
+                        normalizedWeight = 5;
 
                         var fromMin = (result - minValue);
-                        normalizedWeight += (fromMin / (maxValue - minValue)) * 0.75;
+                        normalizedWeight += (fromMin / (maxValue - minValue)) * 0.95;
                     }
                 }
                 else
