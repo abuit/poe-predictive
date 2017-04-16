@@ -26,6 +26,8 @@ namespace PredictiveConsole
 
             ConsoleWriter.Instance.WriteLineEvent += WriteLineEvent;
             ConsoleWriter.Instance.WriteEvent += WriteEvent;
+
+            StartNetworks();
         }
 
         private void WriteEvent(object sender, ConsoleWriterEventArgs e)
@@ -75,7 +77,6 @@ namespace PredictiveConsole
 
         private void ConsoleForm_Activated(object sender, EventArgs e)
         {
-            StartNetworks();
             InputData.Focus();
         }
 
