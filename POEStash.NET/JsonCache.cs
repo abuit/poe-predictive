@@ -4,18 +4,17 @@ using System.Threading.Tasks;
 
 namespace POEStash
 {
-    public class JsonCache
+    public static class JsonCache
     {
         private const string PREFIX = "POESTASH";
-        private Dictionary<string, CachedJson> cache;
+        private static Dictionary<string, CachedJson> cache = new Dictionary<string, CachedJson>();
 
-        public JsonCache()
+        static JsonCache()
         {
-            cache = new Dictionary<string, CachedJson>();
             IndexCache();
         }
 
-        private void IndexCache()
+        public static void IndexCache()
         {
             var tempFolder = Path.GetTempPath();
             DirectoryInfo dirInfo = new DirectoryInfo(tempFolder);
@@ -31,13 +30,13 @@ namespace POEStash
             }
         }
 
-        public async Task Cache(string id, string json)
+        public static async Task Cache(string id, string json)
         {
             await SaveToFile(id, json);
             cache.Add(id, new CachedJson(id, json));
         }
 
-        public async Task<string> LoadJsonFromCache(string id)
+        public static async Task<string> LoadJsonFromCache(string id)
         {
             string json = string.Empty;
             if (!HasJsonForKey(id))
@@ -63,7 +62,7 @@ namespace POEStash
             return json;
         }
 
-        private async Task<string> LoadFromFile(string id)
+        private static async Task<string> LoadFromFile(string id)
         {
             string json = string.Empty;
             var filePath = Path.GetTempPath() + PREFIX + "-" + id;
@@ -82,7 +81,7 @@ namespace POEStash
             return json;
         }
 
-        private async Task SaveToFile(string id, string json)
+        private static async Task SaveToFile(string id, string json)
         {
             var filePath = Path.GetTempPath() + PREFIX + "-" + id;
 
@@ -97,7 +96,7 @@ namespace POEStash
             }
         }
 
-        public bool HasJsonForKey(string id)
+        public static bool HasJsonForKey(string id)
         {
             return cache.ContainsKey(id);
         }
