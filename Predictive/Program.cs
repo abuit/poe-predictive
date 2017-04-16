@@ -51,7 +51,7 @@ namespace Predictive
                     foreach (Item i in s.Items)
                     {
                         //Only belts for now
-                        if (i.TypeLine.IndexOf("Belt", 0, StringComparison.OrdinalIgnoreCase) == -1)
+                        if (i.ItemType != ItemType.Belt)
                         {
                             continue;
                         }
