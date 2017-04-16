@@ -137,6 +137,16 @@ namespace Predictive
 
             return inputArray;
         }
+
+        public override string ToString()
+        {
+            return 
+                string.Join(Environment.NewLine, implicitMods) + Environment.NewLine +
+                "------------" + Environment.NewLine +
+                string.Join(Environment.NewLine, explicitMods) + Environment.NewLine +
+                (CalculatedPrice.HasValue ?  $"Predicted price:   {(int)CalculatedPrice} chaos" + Environment.NewLine : "") +
+                (CalibrationPrice.HasValue ? $"Calibration price: {(int)CalibrationPrice} chaos" + Environment.NewLine : "");
+        }
     }
 
     struct BeltImplicits

@@ -97,29 +97,30 @@ namespace Predictive
             testBelt.AddExplicit(@"+99 to maximum Life");
             testBelt.AddExplicit(@"+48% to Fire Resistance");
             testBelt.AddExplicit(@"+48% to Cold Resistance");
-            testBelt.AddExplicit(@"+35% to Chaos Resistance");
+            testBelt.AddExplicit(@"+48% to Lightning Resistance");
             testBelt.AddExplicit(@"+460 to Armour");
+
 
             var testBelt2 = new Belt();
             testBelt2.AddImplicit(@"+3 to maximum Life");
             testBelt2.AddExplicit(@"+4 to maximum Life");
             testBelt2.AddExplicit(@"+13% to Fire Resistance");
             testBelt2.AddExplicit(@"+10% to Cold Resistance");
-            testBelt2.AddExplicit(@"+5% to Chaos Resistance");
+            testBelt2.AddExplicit(@"+10% to Lightning Resistance");
             testBelt2.AddExplicit(@"+3 to Armour");
 
             
             foreach (Belt b in loadedBelts)
             {
                 beltNetwork.PredictBelt(b);
-                Console.WriteLine($"Predicted price {(int)b.CalculatedPrice} chaos. Actual price: {(int)b.CalibrationPrice} chaos.");
+                Console.WriteLine(b.ToString());
             }
 
             beltNetwork.PredictBelt(testBelt);
-            Console.WriteLine($"Triple resist maxed hp/armour belt: {(int)testBelt.CalculatedPrice} chaos!");
+            Console.WriteLine(testBelt.ToString());
 
             beltNetwork.PredictBelt(testBelt2);
-            Console.WriteLine($"Triple resist minimized hp/armour belt: {(int)testBelt2.CalculatedPrice} chaos!");
+            Console.WriteLine(testBelt2.ToString());
 
             double accuracy = 0;
             int hits = 0;
