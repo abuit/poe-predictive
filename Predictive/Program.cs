@@ -42,7 +42,7 @@ namespace Predictive
                         if (i.Price.IsEmpty() || i.Price.CurrencyType != CurrencyType.ChaosOrb)
                             continue;
 
-                        Belt b = new Belt(i.ExplicitMods)
+                        Belt b = new Belt(i.ImplicitMods, i.ExplicitMods)
                         {
                             CalibrationPrice = i.Price.Value
                         };
@@ -57,7 +57,7 @@ namespace Predictive
                 }
                 currentChangeId = c.NextChangeID;
 
-                if (loadedBelts.Count > 250)
+                if (loadedBelts.Count > 1000)
                     break;
             }
 

@@ -19,16 +19,18 @@ namespace Predictive
             //Regression mode
             network = new ActivationNetwork(
                 f,
-                BeltExplicits.All().Count(), // Base & Affixes
+                BeltImplicits.Count() + BeltExplicits.Count(),
                 //Hidden layers:
                 10,
                 // Regression mode: one output
                 1
             );
 
-            teacher = new BackPropagationLearning(network);
-            teacher.LearningRate = 1;
-            teacher.Momentum = 0.2;
+            teacher = new BackPropagationLearning(network)
+            {
+                LearningRate = 1,
+                Momentum = 0.2
+            };
         }
 
         //Learns in an epoch
