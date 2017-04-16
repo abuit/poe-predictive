@@ -157,7 +157,7 @@ namespace Predictive
             AvoidShock = Regex.Escape($"{CAPTURE}% chance to Avoid being Shocked").Replace(CAPTURE, @"(\d*)"),
             AreaAoE = Regex.Escape($"{CAPTURE}% increased Area of Effect of Area Skills").Replace(CAPTURE, @"(\d*)"),
             SkillDuration = Regex.Escape($"{CAPTURE}% increased Skill Effect Duration").Replace(CAPTURE, @"(\d*)"),
-            AddTrap = Regex.Escape($"Can set up to {CAPTURE} additional trap").Replace(CAPTURE, @"(\d*)"),
+            AddTrap = Regex.Escape($"Can have up to {CAPTURE} additional Trap placed at a time").Replace(CAPTURE, @"(\d*)"),
             Endurance = Regex.Escape($"+{CAPTURE} to Maximum Endurance Charges").Replace(CAPTURE, @"(\d*)"),
             Purity = Regex.Escape($"Grants level {CAPTURE} Purity of Elements Skill").Replace(CAPTURE, @"(\d*)"),
             Clarity = Regex.Escape($"Grants level {CAPTURE} Clarity Skill").Replace(CAPTURE, @"(\d*)"),
@@ -223,7 +223,9 @@ namespace Predictive
             Strength = Regex.Escape($"+{CAPTURE} to Strength").Replace(CAPTURE, @"(\d*)"),
             StunDuration = Regex.Escape($"{CAPTURE}% increased Stun Duration on Enemies").Replace(CAPTURE, @"(\d*)"),
             StunBlockRecovery = Regex.Escape($"{CAPTURE}% increased Stun and Block Recovery").Replace(CAPTURE, @"(\d*)"),
-            StunTreshold = Regex.Escape($"{CAPTURE}% reduced Enemy Stun Threshold").Replace(CAPTURE, @"(\d*)");
+            StunTreshold = Regex.Escape($"{CAPTURE}% reduced Enemy Stun Threshold").Replace(CAPTURE, @"(\d*)"),
+            //Leo
+            LeoMod = Regex.Escape($"{CAPTURE}% increased Damage").Replace(CAPTURE, @"(\d*)");
 
         public string Pattern;
         public double MinValue;
@@ -257,6 +259,7 @@ namespace Predictive
             yield return new BeltExplicits(StunDuration, 11, 35);
             yield return new BeltExplicits(StunBlockRecovery, 11, 28);
             yield return new BeltExplicits(StunTreshold, 5, 15);
+            yield return new BeltExplicits(LeoMod, 5, 15);
         }
 
         public static int Count()
