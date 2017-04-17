@@ -11,7 +11,8 @@ namespace Predictive
     public class NetworkTrainer
     {
         //Update if need be.
-        public static readonly ItemType[] SupportedItemTypes = new ItemType[] { ItemType.Belt, ItemType.Jewel };
+        //Only supports stuff without integral armour/evasion/energy shield or damage.
+        public static readonly ItemType[] SupportedItemTypes = new ItemType[] { ItemType.Belt, ItemType.Jewel, ItemType.Amulet, ItemType.Ring, ItemType.Quiver };
 
         private TrainingCycleResult lastCycleResult;
         private readonly ConversionTable conversionTable;
@@ -63,7 +64,7 @@ namespace Predictive
                 loadedItems[type].AddRange(lastCycleResult.Networks[type].CalibrationItems);
             }
 
-            Console.WriteLine($"Loading for {changeId}...");
+            Console.WriteLine($"Loading stashes for {changeId}...");
 
             StashCollection c = await stash.GetStash(changeId);
 
@@ -101,7 +102,7 @@ namespace Predictive
 
             foreach (ItemType type in SupportedItemTypes)
             {
-                Console.WriteLine($"Number of items loaded: {loadedItems[type].Count}. This cycle there were {loadedItems[type].Count - lastCycleResult.Networks[type].CalibrationItemsCount} new items added.");
+                Console.WriteLine($"Number of {type} items loaded: {loadedItems[type].Count}. This cycle there were {loadedItems[type].Count - lastCycleResult.Networks[type].CalibrationItemsCount} new items added.");
             }
 
             Dictionary<ItemType, ItemNetwork> networks = new Dictionary<ItemType, ItemNetwork>();
@@ -141,6 +142,7 @@ namespace Predictive
                     knownImplicits.Values.ToArray(),
                     knownExplicits.Values.ToArray());
 
+                Console.WriteLine($"Training the {type} network...");
                 network.LearnFromItems();
 
                 networks[type] = network;

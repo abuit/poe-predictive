@@ -1,5 +1,6 @@
 ﻿using AForge.Neuro;
 using AForge.Neuro.Learning;
+using POEStash;
 using System;
 using System.Linq;
 
@@ -46,15 +47,12 @@ namespace Predictive
             var inputVectors = items.Select(b => b.CreateInputVector(knownImplicits, knownExplicits)).ToArray();
             var resultVectors = items.Select(b => b.CreateCalibrationOutputVector()).ToArray();
 
-            Console.WriteLine("Loading data into the network...");
-
             int trainingCycles = 10000;
 
             for (int i = 0; i < trainingCycles; i++)
             {
                 teacher.RunEpoch(inputVectors, resultVectors);
             }
-            Console.WriteLine("Data loaded!");
         }
 
         public double PredictBelt(ParsedItem belt)
