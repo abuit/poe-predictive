@@ -116,6 +116,7 @@ namespace Predictive
 
     public class ParsedAffix
     {
+        public static string RangePattern = @"(?<affixStart>[^\d]*)(?<minValue>[\d]+) to (?<maxValue>[\d]+)(?<affixEnd>[^\d]*)";
         public static string Pattern = @"(?<affixStart>[^\d]*)(?<value>[\d]+)(?<affixEnd>[^\d]*)";
         public readonly string OriginalAffix;
         public readonly string AffixCategory;
@@ -125,18 +126,24 @@ namespace Predictive
         {
             this.OriginalAffix = affix;
 
-            Match m = Regex.Match(OriginalAffix, Pattern);
+            Match m = Regex.Match(OriginalAffix, RangePattern);
             if (m.Success)
             {
-                AffixCategory = m.Groups["affixStart"].Value + " N " + m.Groups["affixEnd"].Value;
+                AffixCategory = m.Groups["affixStart"].Value + "X to Y" + m.Groups["affixEnd"].Value;
+                Value = (double.Parse(m.Groups["minValue"].Value) + double.Parse(m.Groups["maxValue"].Value)) / 2;
+                return;
+            }
+
+            m = Regex.Match(OriginalAffix, Pattern);
+            if (m.Success)
+            {
+                AffixCategory = m.Groups["affixStart"].Value + "X" + m.Groups["affixEnd"].Value;
                 Value = double.Parse(m.Groups["value"].Value);
                 return;
             }
-            else
-            {
-                AffixCategory = affix;
-                Value = 1;
-            }
+
+            AffixCategory = affix;
+            Value = 1;
         }
     }
 
