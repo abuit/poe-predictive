@@ -10,6 +10,9 @@ namespace Predictive
 
     public class NetworkTrainer
     {
+        //Update if need be.
+        public static readonly ItemType[] SupportedItemTypes = new ItemType[] { ItemType.Belt, ItemType.Jewel };
+
         private TrainingCycleResult lastCycleResult;
         private readonly ConversionTable conversionTable;
         private readonly POEStash stash;
@@ -22,16 +25,13 @@ namespace Predictive
 
         public void StartTraining()
         {
-            lastCycleResult = new TrainingCycleResult("45339225-47984329-44953841-51680241-48352319", new ItemNetwork(new ParsedItem[0], new KnownAffix[0], new KnownAffix[0]), new List<ParsedItem>());
+            lastCycleResult = new TrainingCycleResult("45339225-47984329-44953841-51680241-48352319", SupportedItemTypes);
             Task.Factory.StartNew(StartTrainingInternal);
         }
 
-        public ItemNetwork BeltNetwork
+        public ItemNetwork GetItemNetwork(ItemType type)
         {
-            get
-            {
-                return lastCycleResult.Network;
-            }
+            return lastCycleResult.Networks[type];
         }
 
         //Fire and forget internal method
@@ -43,17 +43,25 @@ namespace Predictive
                 //The last cycle result will always contain an initialized network
                 lastCycleResult = await PerformCycle();
 
-                Console.WriteLine($"Accuracy of current belt network with {lastCycleResult.LoadedItems.Count} belts: {(int)lastCycleResult.Network.DetermineAccuracy()} %");
+                foreach (ItemType type in SupportedItemTypes)
+                {
+                    Console.WriteLine($"Accuracy of {type} network with {lastCycleResult.Networks[type].CalibrationItemsCount} items: {(int)lastCycleResult.Networks[type].DetermineAccuracy()} %");
+                }
                 Console.WriteLine(string.Empty);
             }
         }
 
         private async Task<TrainingCycleResult> PerformCycle()
         {
-            //Make a new list of belts.
-            var loadedItems = new List<ParsedItem>(lastCycleResult.LoadedItems);
-            var knownItemsCount = loadedItems.Count;
             var changeId = lastCycleResult.NextChangeId;
+
+            //Load existing items (TODO - remove later)
+            Dictionary<ItemType, List<ParsedItem>> loadedItems = new Dictionary<ItemType, List<ParsedItem>>();
+            foreach (ItemType type in SupportedItemTypes)
+            {
+                loadedItems[type] = new List<ParsedItem>();
+                loadedItems[type].AddRange(lastCycleResult.Networks[type].CalibrationItems);
+            }
 
             Console.WriteLine($"Loading for {changeId}...");
 
@@ -63,11 +71,9 @@ namespace Predictive
             {
                 foreach (Item i in s.Items)
                 {
-                    //Only belts for now
-                    if (i.ItemType != ItemType.Belt)
-                    {
+                    //Skip unsupported items
+                    if (!SupportedItemTypes.Contains(i.ItemType))
                         continue;
-                    }
 
                     //No uniques for now
                     if (i.FrameType != FrameType.Magic && i.FrameType != FrameType.Rare)
@@ -77,7 +83,7 @@ namespace Predictive
                     if (i.Price.IsEmpty() || i.Price.CurrencyType == CurrencyType.Unknown)
                         continue;
 
-                    //Convert if needed
+                    //Convert the value if needed
                     float value;
                     if (i.Price.CurrencyType != CurrencyType.ChaosOrb)
                         value = conversionTable.ConvertTo(i.Price, CurrencyType.ChaosOrb).Value;
@@ -88,47 +94,59 @@ namespace Predictive
                     {
                         CalibrationPrice = value
                     };
-                    loadedItems.Add(b);
+
+                    loadedItems[i.ItemType].Add(b);
                 }
             }
 
-            Console.WriteLine($"Number of items loaded: {loadedItems.Count}. This cycle there were {loadedItems.Count - knownItemsCount} new items added.");
-            //We create a new network here to learn from the new dataset. Is it worth learning on the existing (cloned) network?
-
-            Dictionary<string, KnownAffix> knownImplicits = new Dictionary<string, KnownAffix>();
-            Dictionary<string, KnownAffix> knownExplicits = new Dictionary<string, KnownAffix>();
-            foreach (ParsedItem i in loadedItems)
+            foreach (ItemType type in SupportedItemTypes)
             {
-                foreach (ParsedAffix a in i.ParsedImplicitMods)
-                {
-                    KnownAffix knownAffix;
-                    if (!knownImplicits.TryGetValue(a.AffixCategory, out knownAffix))
-                    {
-                        knownAffix = new KnownAffix(a.AffixCategory, a.Value, a.Value);
-                    }
-
-                    knownAffix.UpdateWith(a);
-                }
-
-                foreach (ParsedAffix a in i.ParsedExplicitMods)
-                {
-                    KnownAffix knownAffix;
-                    if (!knownExplicits.TryGetValue(a.AffixCategory, out knownAffix))
-                    {
-                        knownAffix = new KnownAffix(a.AffixCategory, a.Value, a.Value);
-                    }
-
-                    knownAffix.UpdateWith(a);
-                }
+                Console.WriteLine($"Number of items loaded: {loadedItems[type].Count}. This cycle there were {loadedItems[type].Count - lastCycleResult.Networks[type].CalibrationItemsCount} new items added.");
             }
 
-            ItemNetwork network = new ItemNetwork(loadedItems.ToArray(), 
-                knownImplicits.Values.ToArray(), 
-                knownExplicits.Values.ToArray());
+            Dictionary<ItemType, ItemNetwork> networks = new Dictionary<ItemType, ItemNetwork>();
+            foreach (ItemType type in SupportedItemTypes)
+            {
+                var knownImplicits = new Dictionary<string, KnownAffix>();
+                var knownExplicits = new Dictionary<string, KnownAffix>();
+                foreach (ParsedItem i in loadedItems[type])
+                {
+                    foreach (ParsedAffix a in i.ParsedImplicitMods)
+                    {
+                        KnownAffix knownAffix;
+                        if (!knownImplicits.TryGetValue(a.AffixCategory, out knownAffix))
+                        {
+                            knownAffix = new KnownAffix(a.AffixCategory, a.Value, a.Value);
+                            knownImplicits.Add(knownAffix.AffixCategory, knownAffix);
+                        }
 
-            network.LearnFromItems();
+                        knownAffix.UpdateWith(a);
+                    }
 
-            return new TrainingCycleResult(c.NextChangeID, network, loadedItems);
+                    foreach (ParsedAffix a in i.ParsedExplicitMods)
+                    {
+                        KnownAffix knownAffix;
+                        if (!knownExplicits.TryGetValue(a.AffixCategory, out knownAffix))
+                        {
+                            knownAffix = new KnownAffix(a.AffixCategory, a.Value, a.Value);
+                            knownExplicits.Add(knownAffix.AffixCategory, knownAffix);
+                        }
+
+                        knownAffix.UpdateWith(a);
+                    }
+                }
+
+                ItemNetwork network = new ItemNetwork(
+                    loadedItems[type].ToArray(),
+                    knownImplicits.Values.ToArray(),
+                    knownExplicits.Values.ToArray());
+
+                network.LearnFromItems();
+
+                networks[type] = network;
+            }
+
+            return new TrainingCycleResult(c.NextChangeID, networks);
         }
     }
 
@@ -137,14 +155,24 @@ namespace Predictive
         public string NextChangeId;
 
         //Add more networks here
-        public ItemNetwork Network;
-        public List<ParsedItem> LoadedItems;
+        public Dictionary<ItemType, ItemNetwork> Networks;
 
-        public TrainingCycleResult(string nextChangeId, ItemNetwork network, List<ParsedItem> loadedItems)
+        //Initialize the first training cycle result
+        public TrainingCycleResult(string nextChangeId, ItemType[] supportedTypes)
         {
             NextChangeId = nextChangeId;
-            Network = network;
-            LoadedItems = loadedItems;
+            Networks = new Dictionary<ItemType, ItemNetwork>();
+            foreach(ItemType type in supportedTypes)
+            {
+                Networks[type] = new ItemNetwork(new ParsedItem[0], new KnownAffix[0], new KnownAffix[0]);
+            }
+        }
+
+        //Initialize a completed training cycle result
+        public TrainingCycleResult(string nextChangeId, Dictionary<ItemType, ItemNetwork> networks)
+        {
+            NextChangeId = nextChangeId;
+            Networks = networks;
         }
     }
 }

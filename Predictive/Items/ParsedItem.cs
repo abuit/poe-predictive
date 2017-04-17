@@ -116,7 +116,7 @@ namespace Predictive
 
     public class ParsedAffix
     {
-        public static string Pattern = @"(?<affixStart>[^\d]*)(?<value>[\d]*)(?<affixEnd>[^\d]*)";
+        public static string Pattern = @"(?<affixStart>[^\d]*)(?<value>[\d]+)(?<affixEnd>[^\d]*)";
         public readonly string OriginalAffix;
         public readonly string AffixCategory;
         public readonly double Value;
@@ -130,10 +130,12 @@ namespace Predictive
             {
                 AffixCategory = m.Groups["affixStart"].Value + " N " + m.Groups["affixEnd"].Value;
                 Value = double.Parse(m.Groups["value"].Value);
+                return;
             }
             else
             {
-                throw new ArgumentException("Unparsable: " + OriginalAffix);
+                AffixCategory = affix;
+                Value = 1;
             }
         }
     }

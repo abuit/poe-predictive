@@ -26,7 +26,7 @@ namespace Predictive
             network = new ActivationNetwork(
                 f,
                 // Input layer. Corruption, implicits, explicits.
-                1 + knownImplicits.Count() + knownImplicits.Count(),
+                1 + knownImplicits.Count() + knownExplicits.Count(),
                 //Hidden layers:
                 7,
                 // Regression mode: one output
@@ -62,6 +62,22 @@ namespace Predictive
             var result = network.Compute(belt.CreateInputVector(knownImplicits, knownExplicits));
             belt.ProcessOutputVector(result);
             return belt.CalculatedPrice.Value;
+        }
+
+        public ParsedItem[] CalibrationItems
+        {
+            get
+            {
+                return items;
+            }
+        }
+
+        public int CalibrationItemsCount
+        {
+            get
+            {
+                return items.Count();
+            }
         }
 
         public double DetermineAccuracy()

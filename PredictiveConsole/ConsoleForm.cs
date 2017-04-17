@@ -97,15 +97,15 @@ namespace PredictiveConsole
             CopyPasteParser parser = new CopyPasteParser(this.InputData.Text);
             if (parser.TryParse())
             {
-                if (parser.ItemType != ItemType.Belt)
+                if (NetworkTrainer.SupportedItemTypes.Contains(parser.ItemType))
                 {
-                    ResultLabel.Text = "Only belts are supported atm";
+                    ResultLabel.Text = "This item base is not yet supported";
                     return;
                 }
                 else
                 {
                     Predictive.ParsedItem b = new Predictive.ParsedItem(parser.Corrupted, parser.Implicits, parser.Explicits);
-                    trainer.BeltNetwork.PredictBelt(b);
+                    trainer.GetItemNetwork(parser.ItemType).PredictBelt(b);
                     ResultLabel.Text = $"{b.CalculatedPrice} Chaos";
                 }
             }
