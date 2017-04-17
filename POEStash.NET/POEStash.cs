@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using POEStash.Model;
 using POEStash.Model.Providers;
@@ -49,7 +50,16 @@ namespace POEStash
             //await DatabaseProvider.UpdateDatabase(bucket);
 
             //var snapshot = await DatabaseProvider.GetSnapshot();
-            var snapshot = await TimeAction(async () => await DatabaseProvider.GetSnapshot(), "GetSnapshot");
+            Snapshot snapshot = await TimeAction(async () => await DatabaseProvider.GetSnapshot(), "GetSnapshot");
+
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"Snapshot contains {snapshot.AmountOfItems} items.");
+            for (var index = 0; index < snapshot.AmountsPerType.Length; index++)
+            {
+                var count = snapshot.AmountsPerType[index];
+                sb.AppendLine($"    {(ItemType) index} Count: {count}");
+            }
+            Console.WriteLine(sb.ToString());
 
             sw.Stop();
             Debug.WriteLine($"Total Cycle time: {sw.Elapsed}");

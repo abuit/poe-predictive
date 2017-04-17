@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace POEStash.Model
 {
@@ -11,10 +12,25 @@ namespace POEStash.Model
 
         public int Id { get; }
 
+        public int AmountOfItems { get; }
+
+        public int[] AmountsPerType { get; }
+
         public Snapshot(IEnumerable<JsonPOEStash> stashes)
         {
             this.stashes = stashes;
             this.Id = Snapshot.snapshotId++;
+
+            AmountOfItems = 0;
+            AmountsPerType = new int[(int) ItemType.COUNT];
+            foreach (var stash in stashes)
+            {
+                foreach (var item in stash.Items)
+                {
+                    AmountsPerType[(int)item.ItemType]++;
+                    AmountOfItems++;
+                }
+            }
         }
 
         public IEnumerator<JsonPOEStash> GetEnumerator()

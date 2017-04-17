@@ -34,7 +34,8 @@ namespace POEStash
         SkillGem,
         DivinationCard,
         Currency,
-        Flask
+        Flask,
+        COUNT
     }
 
     public static class BaseTypes

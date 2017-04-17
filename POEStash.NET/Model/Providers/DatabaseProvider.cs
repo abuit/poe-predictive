@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using LiteDB;
 
@@ -34,7 +35,7 @@ namespace POEStash.Model.Providers
                 {
                     var stashCollection = db.GetCollection<JsonPOEStash>(STASH_COLLECTION_NAME);
 
-                    IEnumerable<JsonPOEStash> all = stashCollection.FindAll();
+                    List<JsonPOEStash> all = stashCollection.FindAll().ToList();
 
                     return new Snapshot(all);
                 }
