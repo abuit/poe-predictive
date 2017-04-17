@@ -1,7 +1,5 @@
 ﻿using AForge.Neuro;
 using AForge.Neuro.Learning;
-using POEStash;
-using System;
 using System.Linq;
 
 namespace Predictive
@@ -47,7 +45,7 @@ namespace Predictive
             var inputVectors = items.Select(b => b.CreateInputVector(knownImplicits, knownExplicits)).ToArray();
             var resultVectors = items.Select(b => b.CreateCalibrationOutputVector()).ToArray();
 
-            int trainingCycles = 10000;
+            int trainingCycles = 100;
 
             for (int i = 0; i < trainingCycles; i++)
             {

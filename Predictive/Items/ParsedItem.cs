@@ -65,8 +65,9 @@ namespace Predictive
         /// </summary>
         public double[] CreateInputVector(KnownAffix[] knownImplicits, KnownAffix[] knownExplicits)
         {
-            double[] inputArray = new double[1 + knownImplicits.Length + knownExplicits.Length];
-            inputArray[0] = Corrupted ? 0 : 1;
+            double[] inputArray = Enumerable.Repeat(-1.0, 1 + knownImplicits.Length + knownExplicits.Length).ToArray();
+            if (Corrupted)
+                inputArray[0] = 1;
 
             int indx = 1;
             
@@ -108,7 +109,7 @@ namespace Predictive
             return 
                 string.Join(Environment.NewLine, ParsedImplicitMods.Select(e => e.OriginalAffix)) + Environment.NewLine +
                 "------------" + Environment.NewLine +
-                string.Join(Environment.NewLine, ParsedImplicitMods.Select(e => e.OriginalAffix)) + Environment.NewLine +
+                string.Join(Environment.NewLine, ParsedExplicitMods.Select(e => e.OriginalAffix)) + Environment.NewLine +
                 (CalculatedPrice.HasValue ?  $"Predicted price:   {(int)CalculatedPrice} chaos" + Environment.NewLine : "") +
                 (CalibrationPrice.HasValue ? $"Calibration price: {(int)CalibrationPrice} chaos" + Environment.NewLine : "");
         }

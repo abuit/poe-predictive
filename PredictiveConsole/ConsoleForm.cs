@@ -1,14 +1,8 @@
-﻿using POEStash;
-using Predictive;
+﻿using Predictive;
 using PredictiveCopyPaste;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using POEStash.Currency;
 
@@ -106,6 +100,7 @@ namespace PredictiveConsole
                 else
                 {
                     Predictive.ParsedItem b = new Predictive.ParsedItem(parser.Corrupted, parser.Implicits, parser.Explicits);
+                    Console.WriteLine(b.ToString());
                     trainer.GetItemNetwork(parser.ItemType).PredictBelt(b);
                     ResultLabel.Text = $"{b.CalculatedPrice} Chaos";
                 }
