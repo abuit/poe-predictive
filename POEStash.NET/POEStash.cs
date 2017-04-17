@@ -42,7 +42,8 @@ namespace POEStash
             var bucket = await TimeAction(async () => await JsonProvider.GetBucket(id), "Json.GetBucket");
             //var bucket = await JsonProvider.GetBucket(id);
 
-            Debug.WriteLine($"Input has {bucket.Stashes.Length} stashes. Total of {bucket.Stashes.Sum(x => x.Items.Length)} items.");
+            Console.WriteLine($"Cycle contains {bucket.Stashes.Length} stashes with a total of {bucket.Stashes.Sum(x => x.Items.Length)} items.");
+            //Debug.WriteLine($"Input has {bucket.Stashes.Length} stashes. Total of {bucket.Stashes.Sum(x => x.Items.Length)} items.");
 
             await TimeAction(async () => await DatabaseProvider.UpdateDatabase(bucket), "UpdateDatabase");
             //await DatabaseProvider.UpdateDatabase(bucket);
