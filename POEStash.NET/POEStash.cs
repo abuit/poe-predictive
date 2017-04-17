@@ -9,6 +9,8 @@ namespace POEStash
 {
     public static class POEStash
     {
+        private const int RATE_LIMIT = 60000;
+
         public static string StartId { get; set; } = "45339225-47984329-44953841-51680241-48352319";
         public static IJsonProvider JsonProvider { get; set; } = new APIJsonProvider();
         public static IDatabaseProvider DatabaseProvider = new DatabaseProvider();
@@ -22,7 +24,7 @@ namespace POEStash
                 while (true)
                 {
                     id = await Cycle(id);
-                    await Task.Delay(1000);
+                    await Task.Delay(RATE_LIMIT);
                 }
             });
         }
