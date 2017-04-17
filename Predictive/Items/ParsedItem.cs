@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace Predictive
 {
-    public class Item
+    public class ParsedItem
     {
         //The maximum price the neural network will be able to suggest.
         public readonly static int MaxSupportedChaosPrice = 250;
@@ -20,7 +20,7 @@ namespace Predictive
         public readonly ParsedAffix[] ParsedImplicitMods;
         public readonly ParsedAffix[] ParsedExplicitMods;
 
-        public Item(bool corrupted, string[] implicitMods, string[] explicitMods)
+        public ParsedItem(bool corrupted, string[] implicitMods, string[] explicitMods)
         {
             this.Corrupted = corrupted;
 

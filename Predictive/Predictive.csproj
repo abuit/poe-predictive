@@ -59,7 +59,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Items\Item.cs" />
+    <Compile Include="Items\ParsedItem.cs" />
     <Compile Include="Items\ItemNetwork.cs" />
     <Compile Include="GeneralEnums.cs" />
     <Compile Include="NetworkTrainer.cs" />

@@ -10,11 +10,11 @@ namespace Predictive
         private readonly BackPropagationLearning teacher;
         private readonly ActivationNetwork network;
 
-        private Item[] items;
+        private ParsedItem[] items;
         private readonly KnownAffix[] knownImplicits;
         private readonly KnownAffix[] knownExplicits;
 
-        public ItemNetwork(Item[] items, KnownAffix[] knownImplicits, KnownAffix[] knownExplicits)
+        public ItemNetwork(ParsedItem[] items, KnownAffix[] knownImplicits, KnownAffix[] knownExplicits)
         {
             this.items = items;
             this.knownImplicits = knownImplicits;
@@ -57,7 +57,7 @@ namespace Predictive
             Console.WriteLine("Data loaded!");
         }
 
-        public double PredictBelt(Item belt)
+        public double PredictBelt(ParsedItem belt)
         {
             var result = network.Compute(belt.CreateInputVector(knownImplicits, knownExplicits));
             belt.ProcessOutputVector(result);
@@ -68,7 +68,7 @@ namespace Predictive
         {
             double accuracy = 0;
             int hits = 0;
-            foreach (Item i in items)
+            foreach (ParsedItem i in items)
             {
                 if (i.CalibrationPrice == null)
                     continue;
@@ -76,7 +76,7 @@ namespace Predictive
                 PredictBelt(i);
 
                 double provided = i.CalibrationPrice.Value;
-                if (provided > Item.MaxSupportedChaosPrice) provided = Item.MaxSupportedChaosPrice;
+                if (provided > ParsedItem.MaxSupportedChaosPrice) provided = ParsedItem.MaxSupportedChaosPrice;
 
                 double predicted = i.CalculatedPrice.Value;
 

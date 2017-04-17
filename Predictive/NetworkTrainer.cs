@@ -22,7 +22,7 @@ namespace Predictive
 
         public void StartTraining()
         {
-            lastCycleResult = new TrainingCycleResult("45339225-47984329-44953841-51680241-48352319", new ItemNetwork(new Item[0], new KnownAffix[0], new KnownAffix[0]), new List<Item>());
+            lastCycleResult = new TrainingCycleResult("45339225-47984329-44953841-51680241-48352319", new ItemNetwork(new ParsedItem[0], new KnownAffix[0], new KnownAffix[0]), new List<ParsedItem>());
             Task.Factory.StartNew(StartTrainingInternal);
         }
 
@@ -51,7 +51,7 @@ namespace Predictive
         private async Task<TrainingCycleResult> PerformCycle()
         {
             //Make a new list of belts.
-            var loadedItems = new List<Item>(lastCycleResult.LoadedItems);
+            var loadedItems = new List<ParsedItem>(lastCycleResult.LoadedItems);
             var knownItemsCount = loadedItems.Count;
             var changeId = lastCycleResult.NextChangeId;
 
@@ -61,7 +61,7 @@ namespace Predictive
 
             foreach (Stash s in c.Stashes)
             {
-                foreach (POEStash.Item i in s.Items)
+                foreach (Item i in s.Items)
                 {
                     //Only belts for now
                     if (i.ItemType != ItemType.Belt)
@@ -84,7 +84,7 @@ namespace Predictive
                     else
                         value = i.Price.Value;
 
-                    Item b = new Item(i.Corrupted, i.ImplicitMods, i.ExplicitMods)
+                    ParsedItem b = new ParsedItem(i.Corrupted, i.ImplicitMods, i.ExplicitMods)
                     {
                         CalibrationPrice = value
                     };
@@ -97,7 +97,7 @@ namespace Predictive
 
             Dictionary<string, KnownAffix> knownImplicits = new Dictionary<string, KnownAffix>();
             Dictionary<string, KnownAffix> knownExplicits = new Dictionary<string, KnownAffix>();
-            foreach (Item i in loadedItems)
+            foreach (ParsedItem i in loadedItems)
             {
                 foreach (ParsedAffix a in i.ParsedImplicitMods)
                 {
@@ -138,9 +138,9 @@ namespace Predictive
 
         //Add more networks here
         public ItemNetwork Network;
-        public List<Item> LoadedItems;
+        public List<ParsedItem> LoadedItems;
 
-        public TrainingCycleResult(string nextChangeId, ItemNetwork network, List<Item> loadedItems)
+        public TrainingCycleResult(string nextChangeId, ItemNetwork network, List<ParsedItem> loadedItems)
         {
             NextChangeId = nextChangeId;
             Network = network;
