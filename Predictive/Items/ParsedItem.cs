@@ -116,7 +116,7 @@ namespace Predictive
 
     public class ParsedAffix
     {
-        public static string Pattern = @"(?<affixStart>.*)(?<value>\d)(?<affixEnd>.*)";
+        public static string Pattern = @"(?<affixStart>[^\d]*)(?<value>[\d]*)(?<affixEnd>[^\d]*)";
         public readonly string OriginalAffix;
         public readonly string AffixCategory;
         public readonly double Value;
