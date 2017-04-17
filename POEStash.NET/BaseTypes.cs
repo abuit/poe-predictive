@@ -106,7 +106,7 @@ namespace POEStash
 
             foreach (Unique unique in Uniques.AllUniques)
             {
-                if (typeString.IndexOf(unique.ItemName, 0, StringComparison.OrdinalIgnoreCase) != -1)
+                if (string.Equals(typeString, unique.ItemName, StringComparison.OrdinalIgnoreCase))
                 {
                     type = unique.ItemType;
                     return true;
