@@ -104,7 +104,7 @@ namespace PredictiveConsole
                 }
                 else
                 {
-                    Belt b = new Belt(parser.Corrupted, parser.Implicits, parser.Explicits);
+                    Predictive.Item b = new Predictive.Item(parser.Corrupted, parser.Implicits, parser.Explicits);
                     trainer.BeltNetwork.PredictBelt(b);
                     ResultLabel.Text = $"{b.CalculatedPrice} Chaos";
                 }

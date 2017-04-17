@@ -1,6 +1,7 @@
 ﻿using POEStash;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Predictive
@@ -18,15 +19,15 @@ namespace Predictive
 
         public void StartTraining()
         {
-            lastCycleResult = new TrainingCycleResult("45339225-47984329-44953841-51680241-48352319", new BeltNetwork(), new List<Belt>());
+            lastCycleResult = new TrainingCycleResult("45339225-47984329-44953841-51680241-48352319", new ItemNetwork(new Item[0], new KnownAffix[0], new KnownAffix[0]), new List<Item>());
             Task.Factory.StartNew(StartTrainingInternal);
         }
 
-        public BeltNetwork BeltNetwork
+        public ItemNetwork BeltNetwork
         {
             get
             {
-                return lastCycleResult.BeltNetwork;
+                return lastCycleResult.Network;
             }
         }
 
@@ -39,7 +40,7 @@ namespace Predictive
                 //The last cycle result will always contain an initialized network
                 lastCycleResult = await PerformCycle();
 
-                Console.WriteLine($"Accuracy of current belt network with {lastCycleResult.LoadedBelts.Count} belts: {lastCycleResult.BeltNetwork.DetermineAccuracy(lastCycleResult.LoadedBelts)} %");
+                Console.WriteLine($"Accuracy of current belt network with {lastCycleResult.LoadedItems.Count} belts: {(int)lastCycleResult.Network.DetermineAccuracy()} %");
                 Console.WriteLine(string.Empty);
             }
         }
@@ -47,8 +48,8 @@ namespace Predictive
         private async Task<TrainingCycleResult> PerformCycle()
         {
             //Make a new list of belts.
-            var loadedBelts = new List<Belt>(lastCycleResult.LoadedBelts);
-            var knownBeltsCount = loadedBelts.Count;
+            var loadedItems = new List<Item>(lastCycleResult.LoadedItems);
+            var knownItemsCount = loadedItems.Count;
             var changeId = lastCycleResult.NextChangeId;
 
             Console.WriteLine($"Loading for {changeId}...");
@@ -58,7 +59,7 @@ namespace Predictive
 
             foreach (Stash s in c.Stashes)
             {
-                foreach (Item i in s.Items)
+                foreach (POEStash.Item i in s.Items)
                 {
                     //Only belts for now
                     if (i.ItemType != ItemType.Belt)
@@ -81,20 +82,51 @@ namespace Predictive
                     else
                         value = i.Price.Value;
 
-                    Belt b = new Belt(i.Corrupted, i.ImplicitMods, i.ExplicitMods)
+                    Item b = new Item(i.Corrupted, i.ImplicitMods, i.ExplicitMods)
                     {
                         CalibrationPrice = value
                     };
-                    loadedBelts.Add(b);
+                    loadedItems.Add(b);
                 }
             }
 
-            Console.WriteLine($"Number of belts loaded: {loadedBelts.Count}. This cycle there were {loadedBelts.Count - knownBeltsCount} new belts added.");
+            Console.WriteLine($"Number of items loaded: {loadedItems.Count}. This cycle there were {loadedItems.Count - knownItemsCount} new items added.");
             //We create a new network here to learn from the new dataset. Is it worth learning on the existing (cloned) network?
-            BeltNetwork beltNetwork = new BeltNetwork();
-            beltNetwork.LearnFromBelts(loadedBelts.ToArray());
 
-            return new TrainingCycleResult(c.NextChangeID, beltNetwork, loadedBelts);
+            Dictionary<string, KnownAffix> knownImplicits = new Dictionary<string, KnownAffix>();
+            Dictionary<string, KnownAffix> knownExplicits = new Dictionary<string, KnownAffix>();
+            foreach (Item i in loadedItems)
+            {
+                foreach (ParsedAffix a in i.ParsedImplicitMods)
+                {
+                    KnownAffix knownAffix;
+                    if (!knownImplicits.TryGetValue(a.AffixCategory, out knownAffix))
+                    {
+                        knownAffix = new KnownAffix(a.AffixCategory, a.Value, a.Value);
+                    }
+
+                    knownAffix.UpdateWith(a);
+                }
+
+                foreach (ParsedAffix a in i.ParsedExplicitMods)
+                {
+                    KnownAffix knownAffix;
+                    if (!knownExplicits.TryGetValue(a.AffixCategory, out knownAffix))
+                    {
+                        knownAffix = new KnownAffix(a.AffixCategory, a.Value, a.Value);
+                    }
+
+                    knownAffix.UpdateWith(a);
+                }
+            }
+
+            ItemNetwork network = new ItemNetwork(loadedItems.ToArray(), 
+                knownImplicits.Values.ToArray(), 
+                knownExplicits.Values.ToArray());
+
+            network.LearnFromItems();
+
+            return new TrainingCycleResult(c.NextChangeID, network, loadedItems);
         }
     }
 
@@ -103,14 +135,14 @@ namespace Predictive
         public string NextChangeId;
 
         //Add more networks here
-        public BeltNetwork BeltNetwork;
-        public List<Belt> LoadedBelts;
+        public ItemNetwork Network;
+        public List<Item> LoadedItems;
 
-        public TrainingCycleResult(string nextChangeId, BeltNetwork beltNetwork, List<Belt> loadedBelts)
+        public TrainingCycleResult(string nextChangeId, ItemNetwork network, List<Item> loadedItems)
         {
             NextChangeId = nextChangeId;
-            BeltNetwork = beltNetwork;
-            LoadedBelts = loadedBelts;
+            Network = network;
+            LoadedItems = loadedItems;
         }
     }
 }

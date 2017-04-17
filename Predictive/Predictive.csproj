@@ -59,8 +59,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Belts\Belt.cs" />
-    <Compile Include="Belts\BeltNetwork.cs" />
+    <Compile Include="Items\Item.cs" />
+    <Compile Include="Items\ItemNetwork.cs" />
     <Compile Include="GeneralEnums.cs" />
     <Compile Include="NetworkTrainer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

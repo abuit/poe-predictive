@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace Predictive
 {
+    [Obsolete]
     static class AffixUtils
     {
         public static bool TryMatch(string affix, string patternToMatch, double minValue, double maxValue, out double normalizedWeight)
