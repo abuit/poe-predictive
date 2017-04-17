@@ -5,11 +5,16 @@ namespace POEStash.Model
 {
     public class Snapshot : IEnumerable<JsonPOEStash>
     {
+        private static int snapshotId;
+
         private readonly IEnumerable<JsonPOEStash> stashes;
+
+        public int Id { get; }
 
         public Snapshot(IEnumerable<JsonPOEStash> stashes)
         {
             this.stashes = stashes;
+            this.Id = Snapshot.snapshotId++;
         }
 
         public IEnumerator<JsonPOEStash> GetEnumerator()
