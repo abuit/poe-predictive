@@ -6,27 +6,25 @@ namespace POEStash
     public class APIJsonProvider : IJsonProvider
     {
         private const string API_URL = "http://www.pathofexile.com/api/public-stash-tabs?id=";
-        private readonly string id;
 
-        public APIJsonProvider(string id)
+        public void Dispose()
         {
-            this.id = id;
         }
 
-        public async Task<string> GetJson()
+        public async Task<string> GetJson(string token)
         {
             string json = string.Empty;
 
-            if (JsonCache.HasJsonForKey(id))
+            if (JsonFileCache.HasJsonForKey(token))
             {
-                json = await JsonCache.LoadJsonFromCache(id);
+                json = await JsonFileCache.LoadJsonFromCache(token);
                 return json;
             }
             
             using (var httpClient = new HttpClient())
             {
-                json = await httpClient.GetStringAsync(API_URL + id);
-                await JsonCache.Cache(id, json);
+                json = await httpClient.GetStringAsync(API_URL + token);
+                await JsonFileCache.Cache(token, json);
             }
 
             return json;

@@ -6,15 +6,18 @@ using System.Threading.Tasks;
 
 namespace Predictive
 {
+    using POEStash;
+
     public class NetworkTrainer
     {
         private TrainingCycleResult lastCycleResult;
         private readonly ConversionTable conversionTable;
-
+        private readonly POEStash stash;
 
         public NetworkTrainer(ConversionTable table)
         {
             this.conversionTable = table;
+            this.stash = POEStash.CreateAPIStash();
         }
 
         public void StartTraining()
@@ -54,8 +57,7 @@ namespace Predictive
 
             Console.WriteLine($"Loading for {changeId}...");
 
-            var stash = POEStash.POEStash.CreateAPIStash(changeId);
-            StashCollection c = await stash.GetStashes();
+            StashCollection c = await stash.GetStash(changeId);
 
             foreach (Stash s in c.Stashes)
             {

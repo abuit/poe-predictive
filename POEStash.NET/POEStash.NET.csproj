@@ -36,6 +36,9 @@
     </StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LiteDB, Version=3.1.0.0, Culture=neutral, PublicKeyToken=4ee40123013c9f27, processorArchitecture=MSIL">
+      <HintPath>..\packages\LiteDB.3.1.0\lib\net35\LiteDB.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -51,14 +54,14 @@
   <ItemGroup>
     <Compile Include="BaseTypes.cs" />
     <Compile Include="Currency\ConversionTable.cs" />
-    <Compile Include="Json\JsonCache.cs" />
+    <Compile Include="Json\JsonDBCache.cs" />
     <Compile Include="Json\APIParserSource.cs" />
-    <Compile Include="Json\CachedJsonParserSource.cs" />
     <Compile Include="Currency\Currency.cs" />
-    <Compile Include="Json\FileParserSource.cs" />
     <Compile Include="FrameType.cs" />
+    <Compile Include="Json\IJsonCache.cs" />
     <Compile Include="Json\IParserSource.cs" />
     <Compile Include="Item.cs" />
+    <Compile Include="Json\JsonFileCache.cs" />
     <Compile Include="Json\JsonScientificConverter.cs" />
     <Compile Include="POEStash.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

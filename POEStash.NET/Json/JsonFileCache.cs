@@ -4,12 +4,12 @@ using System.Threading.Tasks;
 
 namespace POEStash
 {
-    public static class JsonCache
+    public static class JsonFileCache
     {
         private const string PREFIX = "POESTASH";
-        private static Dictionary<string, CachedJson> cache = new Dictionary<string, CachedJson>();
+        private static readonly Dictionary<string, CachedJson> cache = new Dictionary<string, CachedJson>();
 
-        static JsonCache()
+        static JsonFileCache()
         {
             IndexCache();
         }
