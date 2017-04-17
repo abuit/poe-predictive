@@ -3,10 +3,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using POEStash.Model;
 
 namespace Predictive
 {
     using POEStash;
+    using POEStash.Currency;
 
     public class NetworkTrainer
     {
@@ -16,18 +18,19 @@ namespace Predictive
 
         private TrainingCycleResult lastCycleResult;
         private readonly ConversionTable conversionTable;
-        private readonly POEStash stash;
+
+        private int LastReceivedSnapshotId = -1;
 
         public NetworkTrainer(ConversionTable table)
         {
             this.conversionTable = table;
-            this.stash = POEStash.CreateAPIStash();
+            this.lastCycleResult = new TrainingCycleResult(SupportedItemTypes);
+            POEStash.OnStashUpdated += POEStash_OnStashUpdated;
         }
 
         public void StartTraining()
         {
-            lastCycleResult = new TrainingCycleResult("45339225-47984329-44953841-51680241-48352319", SupportedItemTypes);
-            Task.Factory.StartNew(StartTrainingInternal);
+            POEStash.Start();
         }
 
         public ItemNetwork GetItemNetwork(ItemType type)
@@ -35,42 +38,55 @@ namespace Predictive
             return lastCycleResult.Networks[type];
         }
 
-        //Fire and forget internal method
-        private async void StartTrainingInternal()
-        {
-            while (lastCycleResult.NextChangeId != null)
-            {
-                //Store the result, then perform the next cycle.
-                //The last cycle result will always contain an initialized network
-                lastCycleResult = await PerformCycle();
+        Task<TrainingCycleResult> ContinuationEndpoint;
 
-                foreach (ItemType type in SupportedItemTypes)
-                {
-                    Console.WriteLine($"Accuracy of {type} network with {lastCycleResult.Networks[type].CalibrationItemsCount} items: {(int)lastCycleResult.Networks[type].DetermineAccuracy()} %");
-                }
-                Console.WriteLine(string.Empty);
+        private async void POEStash_OnStashUpdated(object sender, SnapShotEventArgs e)
+        {
+            //Save the last received snapshot ID
+            LastReceivedSnapshotId = e.Snapshot.Id;
+
+            TrainingCycleResult result;
+            if (ContinuationEndpoint == null)
+            {
+                ContinuationEndpoint = Task.Run(() => PerformCycle(e.Snapshot));
+                result = await ContinuationEndpoint;
             }
+            else {
+                //A task is already running, continue with the new task.
+                ContinuationEndpoint = ContinuationEndpoint.ContinueWith((p) => PerformCycle(e.Snapshot));
+                result = await ContinuationEndpoint;
+            }
+
+            //Check for aborted
+            if (result == TrainingCycleResult.ABORTED)
+            {
+                return;
+            }
+
+            lastCycleResult = result;
         }
 
-        private async Task<TrainingCycleResult> PerformCycle()
+        private TrainingCycleResult PerformCycle(Snapshot snapshot)
         {
-            var changeId = lastCycleResult.NextChangeId;
+            //Cancel right away when a more recent snapshot has been provided
+            if (snapshot.Id < LastReceivedSnapshotId)
+            {
+                Console.WriteLine($"({snapshot.Id}) Evaluation of snapshot was aborted since a more recent snapshot is present.");
+                return TrainingCycleResult.ABORTED;
+            }
 
-            //Load existing items (TODO - remove later)
+            Console.WriteLine($"({snapshot.Id}) Evaluating snapshot...");
+
+            //Initialize a new dictionary to hold the loaded items
             Dictionary<ItemType, List<ParsedItem>> loadedItems = new Dictionary<ItemType, List<ParsedItem>>();
             foreach (ItemType type in SupportedItemTypes)
             {
                 loadedItems[type] = new List<ParsedItem>();
-                loadedItems[type].AddRange(lastCycleResult.Networks[type].CalibrationItems);
             }
 
-            Console.WriteLine($"Loading stashes for {changeId}...");
-
-            StashCollection c = await stash.GetStash(changeId);
-
-            foreach (Stash s in c.Stashes)
+            foreach (JsonPOEStash s in snapshot)
             {
-                foreach (Item i in s.Items)
+                foreach (JsonPOEItem i in s.Items)
                 {
                     //Skip unsupported items
                     if (!SupportedItemTypes.Contains(i.ItemType))
@@ -102,7 +118,7 @@ namespace Predictive
 
             foreach (ItemType type in SupportedItemTypes)
             {
-                Console.WriteLine($"Number of {type} items loaded: {loadedItems[type].Count}. This cycle there were {loadedItems[type].Count - lastCycleResult.Networks[type].CalibrationItemsCount} new items added.");
+                Console.WriteLine($"({snapshot.Id}) Number of {type} items loaded: {loadedItems[type].Count}. This cycle there were {loadedItems[type].Count - lastCycleResult.Networks[type].CalibrationItemsCount} new items added.");
             }
 
             Dictionary<ItemType, ItemNetwork> networks = new Dictionary<ItemType, ItemNetwork>();
@@ -142,27 +158,43 @@ namespace Predictive
                     knownImplicits.Values.ToArray(),
                     knownExplicits.Values.ToArray());
 
-                Console.WriteLine($"Training the {type} network...");
+                Console.WriteLine($"({snapshot.Id}) Training the {type} network...");
                 network.LearnFromItems();
 
                 networks[type] = network;
             }
 
-            return new TrainingCycleResult(c.NextChangeID, networks);
+            Console.WriteLine($"({snapshot.Id}) Training of snapshot {snapshot.Id} was done.");
+
+            //Print the info of this run
+            foreach (ItemType type in SupportedItemTypes)
+            {
+                Console.WriteLine($"({snapshot.Id}) Accuracy of {type} network with {networks[type].CalibrationItemsCount} items: {(int)networks[type].DetermineAccuracy()} %");
+            }
+            Console.WriteLine(string.Empty);
+
+            return new TrainingCycleResult(networks);
         }
     }
 
-    struct TrainingCycleResult
+    class TrainingCycleResult
     {
-        public string NextChangeId;
+        public static TrainingCycleResult ABORTED = new TrainingCycleResult(true);
 
         //Add more networks here
         public Dictionary<ItemType, ItemNetwork> Networks;
+        public readonly bool Aborted;
+
+        private TrainingCycleResult(bool aborted)
+        {
+            Networks = null;
+            Aborted = aborted;
+        }
 
         //Initialize the first training cycle result
-        public TrainingCycleResult(string nextChangeId, ItemType[] supportedTypes)
+        public TrainingCycleResult(ItemType[] supportedTypes)
         {
-            NextChangeId = nextChangeId;
+            Aborted = false;
             Networks = new Dictionary<ItemType, ItemNetwork>();
             foreach(ItemType type in supportedTypes)
             {
@@ -171,9 +203,9 @@ namespace Predictive
         }
 
         //Initialize a completed training cycle result
-        public TrainingCycleResult(string nextChangeId, Dictionary<ItemType, ItemNetwork> networks)
+        public TrainingCycleResult(Dictionary<ItemType, ItemNetwork> networks)
         {
-            NextChangeId = nextChangeId;
+            Aborted = false;
             Networks = networks;
         }
     }

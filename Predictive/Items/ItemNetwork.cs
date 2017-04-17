@@ -62,14 +62,6 @@ namespace Predictive
             return belt.CalculatedPrice.Value;
         }
 
-        public ParsedItem[] CalibrationItems
-        {
-            get
-            {
-                return items;
-            }
-        }
-
         public int CalibrationItemsCount
         {
             get
