@@ -29,7 +29,6 @@ namespace PredictiveConsole
             ConsoleWriter.Instance.WriteEvent += WriteEvent;
 
             StartNetworks();
-            POEStash.POEStash.Start();
         }
 
         private void WriteEvent(object sender, ConsoleWriterEventArgs e)
