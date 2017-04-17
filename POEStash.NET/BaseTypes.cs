@@ -35,6 +35,9 @@ namespace POEStash
         DivinationCard,
         Currency,
         Flask,
+        Essence,
+        Leaguestone,
+        Breachstone,
         COUNT
     }
 
@@ -77,6 +80,9 @@ namespace POEStash
             if (Matches(BaseTypesDivinationCards.BaseTypes, typeString)) return ItemType.DivinationCard;
             if (Matches(BaseTypesCurrencies.BaseTypes, typeString)) return ItemType.Currency;
             if (Matches(BaseTypesFlasks.BaseTypes, typeString)) return ItemType.Flask;
+            if (Matches(BaseTypesLeaguestones.BaseTypes, typeString)) return ItemType.Leaguestone;
+            if (Matches(BaseTypesEssences.BaseTypes, typeString)) return ItemType.Essence;
+            if (Matches(BaseTypesBreachstones.BaseTypes, typeString)) return ItemType.Breachstone;
 
             return ItemType.Unknown;
         }
@@ -179,7 +185,8 @@ namespace POEStash
             "Cloth Belt",
             "Studded Belt",
             "Vanguard Belt",
-            "Crystal Belt"
+            "Crystal Belt",
+            "Golden Obi"
         };
     }
 
@@ -195,6 +202,7 @@ namespace POEStash
             "Broadhead Arrow Quiver",
             "Penetrating Arrow Quiver",
             "Spike-Point Arrow Quiver",
+            "Rugged Quiver",
         };
     }
 
@@ -1458,6 +1466,8 @@ namespace POEStash
             "Wild Strike",
             "Wither",
             "Wrath",
+            "Item Rarity Support",
+            "Item Quantity Support",
         };
     }
 
@@ -1603,6 +1613,53 @@ namespace POEStash
             "The Wind",
             "The Wolf's Shadow",
             "The Wrath",
+            "The Calling",
+            "The Wretched",
+            "The Coming Storm",
+            "Light and Truth",
+            "The Scavenger",
+            "The Visionary",
+            "The Endurance",
+            "Lysah's Respite",
+            "The Lost Undying",
+            "A Forest of False Idols",
+            "Lingering Remnants",
+            "The Coming Storm",
+            "The Stormcaller",
+            "The Lunaris Priestess",
+            "Offering to the Goddess",
+            "Cartographer's Delight",
+            "Emperor of Purity",
+            "The Oath",
+            "The Web",
+            "The Ambitious Bandit I",
+            "Mouth of Horrors",
+            "Hidden Vaal Pathways",
+            "A Master Seeks Help",
+            "The Plaguemaw I",
+            "Mouth of Horrors",
+            "The Walking Mountain",
+            "Unnatural",
+            "A Valuable Combination",
+            "Abnormal Effulgence",
+            "The Valley of Steel Boxes",
+            "The Garish Power",
+            "The Porcupine",
+            "The Wolven King's Bite",
+            "The Cursed King",
+            "Mitts",
+            "The Wolverine",
+            "Dialla's Subjugation",
+            "Call to the First Ones",
+            "Lucky Deck",
+            "The Valkyrie",
+            "The Polymath",
+            "Call to the First Ones",
+            "Rain Tempter",
+            "Unbearable Whispers IV",
+            "The Sephirot",
+            "The Standoff",
+            "Day of Sacrifice I"
         };
     }
 
@@ -1712,6 +1769,154 @@ namespace POEStash
             "Splinter of Uul-Netol",
             "Splinter of Xoph",
             "Transmutation Shard",
+        };
+    }
+
+    public static class BaseTypesEssences
+    {
+        public static string[] BaseTypes =
+        {
+            "Muttering Essence of Anger",
+            "Weeping Essence of Anger",
+            "Wailing Essence of Anger",
+            "Screaming Essence of Anger",
+            "Shrieking Essence of Anger",
+            "Deafening Essence of Anger",
+            "Wailing Essence of Anguish",
+            "Screaming Essence of Anguish",
+            "Shrieking Essence of Anguish",
+            "Deafening Essence of Anguish",
+            "Whispering Essence of Contempt",
+            "Muttering Essence of Contempt",
+            "Weeping Essence of Contempt",
+            "Wailing Essence of Contempt",
+            "Screaming Essence of Contempt",
+            "Shrieking Essence of Contempt",
+            "Deafening Essence of Contempt",
+            "Essence of Delirium",
+            "Weeping Essence of Doubt",
+            "Wailing Essence of Doubt",
+            "Screaming Essence of Doubt",
+            "Shrieking Essence of Doubt",
+            "Deafening Essence of Doubt",
+            "Screaming Essence of Dread",
+            "Shrieking Essence of Dread",
+            "Deafening Essence of Dread",
+            "Screaming Essence of Envy",
+            "Shrieking Essence of Envy",
+            "Deafening Essence of Envy",
+            "Muttering Essence of Fear",
+            "Weeping Essence of Fear",
+            "Wailing Essence of Fear",
+            "Screaming Essence of Fear",
+            "Shrieking Essence of Fear",
+            "Deafening Essence of Fear",
+            "Whispering Essence of Greed",
+            "Muttering Essence of Greed",
+            "Weeping Essence of Greed",
+            "Wailing Essence of Greed",
+            "Screaming Essence of Greed",
+            "Shrieking Essence of Greed",
+            "Deafening Essence of Greed",
+            "Whispering Essence of Hatred",
+            "Muttering Essence of Hatred",
+            "Weeping Essence of Hatred",
+            "Wailing Essence of Hatred",
+            "Screaming Essence of Hatred",
+            "Shrieking Essence of Hatred",
+            "Deafening Essence of Hatred",
+            "Essence of Horror",
+            "Essence of Hysteria",
+            "Essence of Insanity",
+            "Wailing Essence of Loathing",
+            "Screaming Essence of Loathing",
+            "Shrieking Essence of Loathing",
+            "Deafening Essence of Loathing",
+            "Screaming Essence of Misery",
+            "Shrieking Essence of Misery",
+            "Deafening Essence of Misery",
+            "Weeping Essence of Rage",
+            "Wailing Essence of Rage",
+            "Screaming Essence of Rage",
+            "Shrieking Essence of Rage",
+            "Deafening Essence of Rage",
+            "Screaming Essence of Scorn",
+            "Shrieking Essence of Scorn",
+            "Deafening Essence of Scorn",
+            "Muttering Essence of Sorrow",
+            "Weeping Essence of Sorrow",
+            "Wailing Essence of Sorrow",
+            "Screaming Essence of Sorrow",
+            "Shrieking Essence of Sorrow",
+            "Deafening Essence of Sorrow",
+            "Wailing Essence of Spite",
+            "Screaming Essence of Spite",
+            "Shrieking Essence of Spite",
+            "Deafening Essence of Spite",
+            "Weeping Essence of Suffering",
+            "Wailing Essence of Suffering",
+            "Screaming Essence of Suffering",
+            "Shrieking Essence of Suffering",
+            "Deafening Essence of Suffering",
+            "Muttering Essence of Torment",
+            "Weeping Essence of Torment",
+            "Wailing Essence of Torment",
+            "Screaming Essence of Torment",
+            "Shrieking Essence of Torment",
+            "Deafening Essence of Torment",
+            "Whispering Essence of Woe",
+            "Muttering Essence of Woe",
+            "Weeping Essence of Woe",
+            "Wailing Essence of Woe",
+            "Screaming Essence of Woe",
+            "Shrieking Essence of Woe",
+            "Deafening Essence of Woe",
+            "Weeping Essence of Wrath",
+            "Wailing Essence of Wrath",
+            "Screaming Essence of Wrath",
+            "Shrieking Essence of Wrath",
+            "Deafening Essence of Wrath",
+            "Wailing Essence of Zeal",
+            "Screaming Essence of Zeal",
+            "Shrieking Essence of Zeal",
+            "Deafening Essence of Zeal",
+            "Remnant of Corruption",
+        };
+    }
+
+    public static class BaseTypesLeaguestones
+    {
+        public static string[] BaseTypes =
+        {
+            "Ambush Leaguestone",
+            "Anarchy Leaguestone",
+            "Beyond Leaguestone",
+            "Bloodlines Leaguestone",
+            "Breach Leaguestone",
+            "Domination Leaguestone",
+            "Essence Leaguestone",
+            "Invasion Leaguestone",
+            "Nemesis Leaguestone",
+            "Onslaught Leaguestone",
+            "Perandus Leaguestone",
+            "Prophecy Leaguestone",
+            "Rampage Leaguestone",
+            "Talisman Leaguestone",
+            "Tempest Leaguestone",
+            "Torment Leaguestone",
+            "Warbands Leaguestone",
+        };
+    }
+
+    public static class BaseTypesBreachstones
+    {
+        public static string[] BaseTypes =
+        {
+            "Chayula's Breachstone",
+            "Esh's Breachstone",
+            "Tul's Breachstone",
+            "Uul-Netol's Breachstone",
+            "Xoph's Breachstone",
         };
     }
 

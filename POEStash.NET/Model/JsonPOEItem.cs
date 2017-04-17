@@ -1,4 +1,6 @@
-﻿using LiteDB;
+﻿using System;
+using System.Diagnostics;
+using LiteDB;
 using Newtonsoft.Json;
 
 namespace POEStash.Model
@@ -52,6 +54,10 @@ namespace POEStash.Model
             {
                 typeLine = StripLocalization(value);
                 ItemType = BaseTypes.GetItemType(typeLine);
+                if (ItemType == ItemType.Unknown)
+                {
+                    Debug.WriteLine($"Unknown ItemType! Name: {Name}. TypeLine: {TypeLine}");
+                }
             }
         }
 
