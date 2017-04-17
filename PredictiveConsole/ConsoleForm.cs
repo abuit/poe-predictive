@@ -97,9 +97,9 @@ namespace PredictiveConsole
             CopyPasteParser parser = new CopyPasteParser(this.InputData.Text);
             if (parser.TryParse())
             {
-                if (NetworkTrainer.SupportedItemTypes.Contains(parser.ItemType))
+                if (!NetworkTrainer.SupportedItemTypes.Contains(parser.ItemType))
                 {
-                    ResultLabel.Text = "This item base is not yet supported";
+                    ResultLabel.Text = $"The item type {parser.ItemType} is not yet supported";
                     return;
                 }
                 else
