@@ -1,4 +1,4 @@
-﻿namespace POEStash
+﻿namespace POEStash.Model
 {
     public enum ValueType
     {

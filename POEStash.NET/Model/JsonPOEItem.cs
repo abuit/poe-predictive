@@ -1,9 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using LiteDB;
+using Newtonsoft.Json;
 
-namespace POEStash
+namespace POEStash.Model
 {
     [JsonObject]
-    public class Item
+    public class JsonPOEItem
     {
         private string typeLine = "";
         private string name = "";
@@ -30,7 +31,7 @@ namespace POEStash
         public string ID { get; set; } = "";
 
         [JsonProperty("sockets")]
-        public Socket[] Sockets { get; set; } = new Socket[0];
+        public JsonPOESocket[] JsonPoeSockets { get; set; } = new JsonPOESocket[0];
 
         [JsonProperty("name")]
         public string Name
@@ -51,7 +52,6 @@ namespace POEStash
             {
                 typeLine = StripLocalization(value);
                 ItemType = BaseTypes.GetItemType(typeLine);
-                //IsUnique = BaseTypes.IsUnique(typeLine);
             }
         }
 
@@ -68,10 +68,10 @@ namespace POEStash
         public string Note { get; set; } = "";
 
         [JsonProperty("properties")]
-        public Property[] Properties { get; set; } = new Property[0];
+        public JsonPOEProperty[] JsonPoeProperties { get; set; } = new JsonPOEProperty[0];
 
         [JsonProperty("requirements")]
-        public Property[] Requirements { get; set; } = new Property[0];
+        public JsonPOEProperty[] Requirements { get; set; } = new JsonPOEProperty[0];
 
         [JsonProperty("explicitMods")]
         public string[] ExplicitMods { get; set; } = new string[0];
@@ -101,10 +101,10 @@ namespace POEStash
         public string InventoryID { get; set; } = "";
 
         [JsonProperty("socketedItems")]
-        public Item[] SocketedItems { get; set; } = new Item[0];
+        public JsonPOEItem[] SocketedJsonPoeItems { get; set; } = new JsonPOEItem[0];
 
         [JsonProperty("additionalProperties")]
-        public Property[] AdditionalProperties { get; set; } = new Property[0];
+        public JsonPOEProperty[] AdditionalJsonPoeProperties { get; set; } = new JsonPOEProperty[0];
 
         [JsonProperty("secDescrText")]
         public string SecondaryDescription { get; set; } = "";
@@ -125,7 +125,7 @@ namespace POEStash
         public int MaxStackSize { get; set; }
 
         [JsonProperty("nextLevelRequirements")]
-        public Property[] NextLevelRequirements { get; set; } = new Property[0];
+        public JsonPOEProperty[] NextLevelRequirements { get; set; } = new JsonPOEProperty[0];
 
         [JsonProperty("talismanTier")]
         public int TalismanTier { get; set; }
@@ -148,13 +148,15 @@ namespace POEStash
         [JsonProperty("isRelic")]
         public bool IsRelic { get; set; }
 
-        public Stash Stash { get; set; }
+        [BsonIgnore]
+        public JsonPOEStash Stash { get; set; }
 
-        public Currency Price
+        [BsonIgnore]
+        public Currency.Currency Price
         {
             get
             {
-                var price = Currency.Parse(Note);
+                var price = Currency.Currency.Parse(Note);
 
                 if (price.IsEmpty() && Stash != null)
                 {
@@ -165,11 +167,13 @@ namespace POEStash
             }
         }
 
+        [BsonIgnore]
         public ItemType ItemType { get; private set; } = ItemType.Unknown;
 
+        [BsonIgnore]
         public bool IsUnique { get; private set; } = false;
 
-        public Item() { }
+        public JsonPOEItem() { }
 
         private string StripLocalization(string input)
         {

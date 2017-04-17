@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using POEStash.Currency;
 
 namespace PredictiveConsole
 {
@@ -28,6 +29,7 @@ namespace PredictiveConsole
             ConsoleWriter.Instance.WriteEvent += WriteEvent;
 
             StartNetworks();
+            POEStash.POEStash.Start();
         }
 
         private void WriteEvent(object sender, ConsoleWriterEventArgs e)

@@ -22,8 +22,8 @@ namespace PredictiveCopyPaste
         static readonly string StrText = Regex.Escape($"Str: {WHATEVER}").Replace(WHATEVER, ".*");
         static readonly string DexText = Regex.Escape($"Dex: {WHATEVER}").Replace(WHATEVER, ".*");
         static readonly string IntText = Regex.Escape($"Int: {WHATEVER}").Replace(WHATEVER, ".*");
-        static readonly string SocketsText = Regex.Escape($"Sockets: {WHATEVER}").Replace(WHATEVER, ".*");
-        static readonly string ItemLevelText = Regex.Escape($"Item Level: {WHATEVER}{Environment.NewLine}").Replace(WHATEVER, ".*");
+        static readonly string SocketsText = Regex.Escape($"JsonPoeSockets: {WHATEVER}").Replace(WHATEVER, ".*");
+        static readonly string ItemLevelText = Regex.Escape($"JsonPOEItem Level: {WHATEVER}{Environment.NewLine}").Replace(WHATEVER, ".*");
         static readonly string CorruptionText = Regex.Escape($"Corrupted");
         static readonly string CosmeticText = Regex.Escape($"Has {WHATEVER}").Replace(WHATEVER, ".*");
 

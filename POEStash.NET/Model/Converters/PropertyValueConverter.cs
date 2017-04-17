@@ -1,36 +1,14 @@
 ﻿using System;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json.Linq;
 
-namespace POEStash
+namespace POEStash.Model.Converters
 {
-    [JsonObject]
-    public class Property
-    {
-        [JsonProperty("name")]
-        public string Name      { get; set; }
-        [JsonProperty("displayMode")]
-        public int DisplayMode  { get; set; }
-        [JsonProperty("type")]
-        public int Type         { get; set; }
-        [JsonProperty("values"), JsonConverter(typeof(PropertyValueConverter))]
-        public PropertyValue Values { get; set; }
-        [JsonProperty("progress"), JsonConverter(typeof(JsonScientificConverter))]
-        public int Progress     { get; set; }
-    }
-
-    public class PropertyValue
-    {
-        public string Value { get; set; }
-        public ValueType ValueType { get; set; }
-    }
-
     class PropertyValueConverter : JsonConverter
     {
         public override bool CanConvert(Type objectType)
         {
-            return (objectType == typeof(PropertyValue));
+            return (objectType == typeof(JsonPOEPropertyValue));
         }
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
@@ -38,14 +16,14 @@ namespace POEStash
             JArray array = JArray.Load(reader);
             if (array.Count == 0)
             {
-                return new PropertyValue
+                return new JsonPOEPropertyValue
                 {
                     Value = string.Empty,
                     ValueType = 0
                 };
             }
 
-            return new PropertyValue
+            return new JsonPOEPropertyValue
             {
                 Value = (string)array[0][0],
                 ValueType = (ValueType)(int)array[0][1]
@@ -62,4 +40,3 @@ namespace POEStash
         }
     }
 }
-

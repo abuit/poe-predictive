@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace POEStash
+namespace POEStash.Currency
 {
     public class ConversionTable
     {

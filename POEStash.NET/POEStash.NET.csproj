@@ -44,6 +44,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -54,26 +55,29 @@
   <ItemGroup>
     <Compile Include="BaseTypes.cs" />
     <Compile Include="Currency\ConversionTable.cs" />
-    <Compile Include="Json\JsonDBCache.cs" />
-    <Compile Include="Json\APIParserSource.cs" />
+    <Compile Include="Model\Providers\DatabaseProvider.cs" />
+    <Compile Include="Model\Providers\IDatabaseProvider.cs" />
     <Compile Include="Currency\Currency.cs" />
-    <Compile Include="FrameType.cs" />
-    <Compile Include="Json\IJsonCache.cs" />
-    <Compile Include="Json\IParserSource.cs" />
-    <Compile Include="Item.cs" />
-    <Compile Include="Json\JsonFileCache.cs" />
-    <Compile Include="Json\JsonScientificConverter.cs" />
+    <Compile Include="Model\APIJsonProvider.cs" />
+    <Compile Include="Model\FrameType.cs" />
+    <Compile Include="Model\Providers\IJsonProvider.cs" />
+    <Compile Include="Model\JsonPOEItem.cs" />
+    <Compile Include="Model\Converters\JsonScientificConverter.cs" />
+    <Compile Include="Model\JsonPOEPropertyValue.cs" />
+    <Compile Include="Model\Converters\PropertyValueConverter.cs" />
+    <Compile Include="Model\Snapshot.cs" />
     <Compile Include="POEStash.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Property.cs" />
-    <Compile Include="Socket.cs" />
-    <Compile Include="Stash.cs" />
-    <Compile Include="StashCollection.cs" />
-    <Compile Include="ValueTypes.cs" />
+    <Compile Include="Model\JsonPOEProperty.cs" />
+    <Compile Include="Model\JsonPOESocket.cs" />
+    <Compile Include="Model\JsonPOEStash.cs" />
+    <Compile Include="Model\JsonPOEBucket.cs" />
+    <Compile Include="Model\ValueTypes.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

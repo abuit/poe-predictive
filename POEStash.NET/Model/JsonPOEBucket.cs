@@ -1,16 +1,16 @@
 ﻿using Newtonsoft.Json;
 
-namespace POEStash
+namespace POEStash.Model
 {
     [JsonObject]
-    public class StashCollection
+    public class JsonPOEBucket
     {
         [JsonProperty("next_change_id")]
         public string NextChangeID { get; set; }
 
         [JsonProperty("stashes")]
-        public Stash[] Stashes { get; set; }
+        public JsonPOEStash[] Stashes { get; set; }
 
-        public StashCollection() { }
+        public JsonPOEBucket() { }
     }
 }

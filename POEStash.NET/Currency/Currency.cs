@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 
-namespace POEStash
+namespace POEStash.Currency
 {
     public enum CurrencyType
     {

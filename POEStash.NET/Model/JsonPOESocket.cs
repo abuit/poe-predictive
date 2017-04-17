@@ -1,9 +1,9 @@
 ﻿using Newtonsoft.Json;
 
-namespace POEStash
+namespace POEStash.Model
 {
     [JsonObject]
-    public class Socket
+    public class JsonPOESocket
     {
         [JsonProperty("group")]
         public int Group { get; set; }

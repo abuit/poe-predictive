@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using POEStash;
+using POEStash.Currency;
 
 namespace POEStashTests
 {

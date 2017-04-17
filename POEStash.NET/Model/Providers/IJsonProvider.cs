@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace POEStash
+namespace POEStash.Model.Providers
 {
     public interface IJsonProvider : IDisposable
     {
-        Task<string> GetJson(string token);
+        Task<JsonPOEBucket> GetBucket(string token);
     }
 }
