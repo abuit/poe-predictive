@@ -1,5 +1,6 @@
 ﻿using AForge.Neuro;
 using AForge.Neuro.Learning;
+using System;
 using System.Linq;
 
 namespace Predictive
@@ -26,8 +27,7 @@ namespace Predictive
                 f,
                 // Input layer. Corruption, implicits, explicits.
                 1 + knownImplicits.Count() + knownExplicits.Count(),
-                //Hidden layers:
-                7,
+                5,
                 // Regression mode: one output
                 1
             );
@@ -44,8 +44,21 @@ namespace Predictive
         {
             var inputVectors = items.Select(b => b.CreateInputVector(knownImplicits, knownExplicits)).ToArray();
             var resultVectors = items.Select(b => b.CreateCalibrationOutputVector()).ToArray();
+            
+            //Balancing the dataset with some empty input vectors
+            var emptyItem = Enumerable.Repeat(-1.0, 1 + knownImplicits.Length + knownExplicits.Length).ToArray();
+            var emptyResult = new double[1] { 0 };
+            var emptyInputVector = Enumerable.Repeat(emptyItem, items.Length).ToArray();
+            var emptyResultVector = Enumerable.Repeat(emptyResult, items.Length).ToArray();
+            
+            //Put the arrays with the original input- and output vectors
+            Array.Resize(ref inputVectors, inputVectors.Length * 2);
+            Array.Copy(emptyInputVector, 0, inputVectors, emptyInputVector.Length, emptyInputVector.Length);
 
-            int trainingCycles = 100;
+            Array.Resize(ref resultVectors, resultVectors.Length * 2);
+            Array.Copy(emptyResultVector, 0, resultVectors, emptyResultVector.Length, emptyResultVector.Length);
+
+            int trainingCycles = 10000;
 
             for (int i = 0; i < trainingCycles; i++)
             {
@@ -53,9 +66,14 @@ namespace Predictive
             }
         }
 
-        public double PredictBelt(ParsedItem belt)
+        public double PredictBelt(ParsedItem belt, bool silent = false)
         {
-            var result = network.Compute(belt.CreateInputVector(knownImplicits, knownExplicits));
+            var inputVector = belt.CreateInputVector(knownImplicits, knownExplicits);
+
+            if (!silent)
+                System.Console.WriteLine($"Processing input vector: [{ string.Join(", ", inputVector) }]");
+
+            var result = network.Compute(inputVector);
             belt.ProcessOutputVector(result);
             return belt.CalculatedPrice.Value;
         }
@@ -77,7 +95,7 @@ namespace Predictive
                 if (i.CalibrationPrice == null)
                     continue;
 
-                PredictBelt(i);
+                PredictBelt(i, true);
 
                 double provided = i.CalibrationPrice.Value;
                 if (provided > ParsedItem.MaxSupportedChaosPrice) provided = ParsedItem.MaxSupportedChaosPrice;
