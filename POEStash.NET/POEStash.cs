@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,8 +12,7 @@ namespace POEStash
     public static class POEStash
     {
         private const int RATE_LIMIT = 60000;
-
-        public static string StartId { get; set; } = "45339225-47984329-44953841-51680241-48352319";
+        private const string FALLBACK_ID = "45339225-47984329-44953841-51680241-48352319";
         public static IJsonProvider JsonProvider { get; set; } = new APIJsonProvider();
         public static IDatabaseProvider DatabaseProvider = new DatabaseProvider();
 
@@ -20,11 +20,12 @@ namespace POEStash
         {
             Task.Run(async () =>
             {
-                string id = StartId;
+                string id = GetLastID();
 
                 while (true)
                 {
                     id = await Cycle(id);
+                    SetLastID(id);
                     await Task.Delay(RATE_LIMIT);
                 }
             });
@@ -43,7 +44,8 @@ namespace POEStash
             var bucket = await TimeAction(async () => await JsonProvider.GetBucket(id), "Json.GetBucket");
             //var bucket = await JsonProvider.GetBucket(id);
 
-            Console.WriteLine($"Cycle contains {bucket.Stashes.Length} stashes with a total of {bucket.Stashes.Sum(x => x.Items.Length)} items.");
+            Console.WriteLine(
+                $"Cycle contains {bucket.Stashes.Length} stashes with a total of {bucket.Stashes.Sum(x => x.Items.Length)} items.");
             //Debug.WriteLine($"Input has {bucket.Stashes.Length} stashes. Total of {bucket.Stashes.Sum(x => x.Items.Length)} items.");
 
             await TimeAction(async () => await DatabaseProvider.UpdateDatabase(bucket), "UpdateDatabase");
@@ -83,6 +85,43 @@ namespace POEStash
             sw.Stop();
             Debug.WriteLine($"{label} Cycle time: {sw.Elapsed}");
             return result;
+        }
+
+        private static string GetLastID()
+        {
+            try
+            {
+                var result = File.ReadAllLines($"{Path.GetTempPath()}poestashid.txt");
+                if (result.Length > 0)
+                {
+                    return result[0];
+                }
+                else
+                {
+                    return FALLBACK_ID;
+                }
+            }
+            catch (Exception exception)
+            {
+                if (!(exception is FileNotFoundException)) // This is OK, the file will be created at a later point
+                {
+                    Debug.WriteLine(exception);
+                }
+            }
+
+            return FALLBACK_ID;
+        }
+
+        private static void SetLastID(string id)
+        {
+            try
+            {
+                File.WriteAllLines($"{Path.GetTempPath()}poestashid.txt", new[] {id});
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e);
+            }
         }
 
         public static event EventHandler<SnapShotEventArgs> OnStashUpdated;
